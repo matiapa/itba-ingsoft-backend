@@ -1,33 +1,84 @@
 create table users
 (
-    id serial not null
-        constraint users_pkey
-            primary key,
-    rol text not null,
-    name text not null,
+    id        integer primary key,
+    rol       text not null,
+    name      text not null,
     last_name text not null,
-    email text not null
-        constraint users_email_key
-            unique
+    email     text not null unique
+
 );
 
-alter table users owner to postgres;
 
-create table personal_info
-(
-    id serial not null
-        constraint personal_info_id_fkey
-            references users
-                on delete cascade,
-    document_type text,
-    document text,
-    telephone_type text,
-    telephone text,
-    country text,
-    province text,
-    location text,
-    street text,
-    street_number text
+create table personal_info(
+    user_id integer references users(id) on delete cascade,
+    document_type text not null,
+    document text unique,
+    telephone_type text not null,
+    telephone text not null,
+    country text not null,
+    province text not null,
+    location text not null,
+    street text not null,
+    street_number text not null,
+    primary key(user_id)
+
 );
 
-alter table personal_info owner to postgres;
+create table experts(
+    id serial primary key,
+    name text,
+    last_name text,
+    category  text
+
+);
+
+
+create table auction(
+    id serial primary key,
+    category text,
+    name text
+
+);
+
+
+create table expertAsign(
+    id_exp integer not null references experts(id) on delete cascade,
+    id_ac integer not null references auction(id) on delete cascade,
+    name text,
+    primary key(id_exp,id_ac)
+);
+
+create table lots(
+    id serial primary key,
+    name text,
+    descripcion text,
+    auction_id integer not null references auction(id) on delete cascade
+);
+
+create table lotPhotos(
+    lot_id integer not null references lots(id),
+    url text unique,
+    primary key(lot_id,url)
+);
+
+create table auction_room(
+    id serial primary key,
+    owner_id integer not null references users(id) on delete set null,
+    lot_id integer not null references lots(id) on delete set null,
+    creation_date timestamp,
+    duration interval,
+    state text
+
+
+
+);
+
+create table bid(
+    user_id integer not null references users(id) on delete cascade,
+    ar_id integer  not null references auction_room(id) on delete cascade,
+    amount decimal not null,
+    time timestamp  not null,
+    primary key (user_id,ar_id,time)
+
+
+);
