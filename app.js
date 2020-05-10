@@ -50,12 +50,12 @@ function validateUser(user_info) {
     last_name: Joi.string().min(2).max(30).required(),
     email: Joi.string().email({ minDomainSegments: 2 }).required(),
     document_type: Joi.string()
-      .valid("nid", "ic", "passport")
+      .valid("dni", "ci", "passport")
       .insensitive()
       .required(),
     document: Joi.string().length(8).required(),
     telephone_type: Joi.string()
-      .valid("particular", "mobile")
+      .valid("landline", "mobile")
       .insensitive()
       .required(),
     country: Joi.string().required(),
@@ -97,6 +97,7 @@ app.post("/register", (req, res) => {
             country: req.body.country,
             province: req.body.province,
             location: req.body.location,
+            zip: req.body,
             street: req.body.street,
             street_number: req.body.street_number,
           };
