@@ -1,7 +1,6 @@
-const knex = require("./knex.js");
+const knex = require("../knex.js");
 
 //tables
-const Users = knex("users");
 
 module.exports = {
   getAllUsers() {
@@ -10,8 +9,15 @@ module.exports = {
   getUserById(id) {
     return knex("users").where("id", id).first();
   },
+  getUserByEmail(email) {
+    return knex("users").where("email", email).first();
+  },
   createUser(user) {
-    return knex("users").insert(user, "*");
+    return knex("users")
+      .insert(user, "id")
+      .then((ids) => {
+        return ids[0];
+      });
   },
   deleteUser(id) {
     return knex("users").where("id", id).del();
