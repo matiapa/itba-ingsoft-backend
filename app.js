@@ -5,6 +5,7 @@ var logger = require("morgan");
 var auth = require("./firebase/authorization.js");
 var Joi = require("joi");
 var User = require("./db/queries/user.js");
+var user = require("./routes/user");
 var app = express();
 
 app.use(logger("dev"));
@@ -58,6 +59,7 @@ function validateUser(user_info) {
       .valid("landline", "mobile")
       .insensitive()
       .required(),
+    telephone: Joi.number().integer().required(),
     country: Joi.string().required(),
     province: Joi.string().required(),
     location: Joi.string().required(),
@@ -111,3 +113,5 @@ app.post("/register", (req, res) => {
     });
   }
 });
+
+app.use("/user", user);

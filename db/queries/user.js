@@ -25,4 +25,7 @@ module.exports = {
   createPersonalInfo(info) {
     return knex("personal_info").insert(info, "*");
   },
+  getPersonalInfo(id) {
+    return knex("personal_info").where("user_id", id).first();
+  },
 };
