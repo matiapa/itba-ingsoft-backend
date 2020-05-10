@@ -13,7 +13,7 @@ function createSession(req, res) {
 
     admin.auth().createSessionCookie(idToken, {expiresIn})
     .then((sessionCookie) => {
-        const options = { maxAge: expiresIn, httpOnly: true, secure: true };
+        const options = { maxAge: expiresIn, httpOnly: true, secure: false };
         res.cookie('session', sessionCookie, options);
         res.end(JSON.stringify({status: 'success'}));
     }, error => {
@@ -28,7 +28,7 @@ function checkAuth(req, res, next) {
     admin.auth().verifySessionCookie(sessionCookie, true)
     .then((decodedClaims) => 
     {
-        req.uid = decodedClaims.sub;
+        req.uid = decodedClaims.uid;
         next();
     })
     .catch(error => {
