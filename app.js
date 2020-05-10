@@ -43,14 +43,14 @@ app.use("/logout", auth.checkAuth);
 app.post("/logout", auth.closeSession);
 
 //register validations
-function validateUser(user) {
+function validateUser(user_info) {
   const schema = {
     uid: Joi.number().integer(),
     name: Joi.string().min(2).max(30).required(),
     last_name: Joi.string().min(2).max(30).required(),
     email: Joi.string().email({ minDomainSegments: 2 }).required(),
     document_type: Joi.string()
-      .valid("dni", "ci", "passport")
+      .valid("nid", "ic", "passport")
       .insensitive()
       .required(),
     document: Joi.string().length(8).required(),
@@ -64,7 +64,7 @@ function validateUser(user) {
     street: Joi.string().required(),
     street_number: Joi.string().required(),
   };
-  return Joi.validate(user, shema);
+  return Joi.validate(user_info, shema);
 }
 
 //register
