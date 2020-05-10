@@ -50,12 +50,12 @@ function validateUser(user_info) {
     last_name: Joi.string().min(2).max(30).required(),
     email: Joi.string().email({ minDomainSegments: 2 }).required(),
     document_type: Joi.string()
-      .valid("nid", "ic", "passport")
+      .valid("dni", "ci", "pasaporte")
       .insensitive()
       .required(),
     document: Joi.string().length(8).required(),
     telephone_type: Joi.string()
-      .valid("particular", "cellphone")
+      .valid("particular", "celular")
       .insensitive()
       .required(),
     country: Joi.string().required(),
@@ -82,6 +82,7 @@ app.post("/register", (req, res) => {
         //unique email
         const user = {
           id: req.body.uid,
+          rol: "user",
           name: req.body.name,
           last_name: req.body.last_name,
           email: req.body.email,
