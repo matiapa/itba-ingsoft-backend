@@ -1,0 +1,11 @@
+{
+  "development": {
+    "client": "pg",
+    "connection": {
+      "host": "",
+      "database": "",
+      "user": "",
+      "password": ""
+    }
+  }
+}

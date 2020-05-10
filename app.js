@@ -46,7 +46,6 @@ app.post("/logout", auth.closeSession);
 //register validations
 function validateUser(user_info) {
   const schema = {
-    uid: Joi.string().required(),
     name: Joi.string().min(2).max(30).required(),
     last_name: Joi.string().min(2).max(30).required(),
     email: Joi.string().email({ minDomainSegments: 2 }).required(),
@@ -63,10 +62,11 @@ function validateUser(user_info) {
     country: Joi.string().required(),
     province: Joi.string().required(),
     location: Joi.string().required(),
+    zip: Joi.number().integer().required(),
     street: Joi.string().required(),
     street_number: Joi.string().required(),
   };
-  return Joi.validate(user_info, shema);
+  return Joi.validate(user_info, schema);
 }
 
 //register
@@ -78,12 +78,12 @@ app.post("/register", (req, res) => {
     return res.status(400).send(result.error.details[0].message);
   } else {
     //check if email is in use
-    User.getUserByEmail(email).then((user) => {
+    User.getUserByEmail(req.body.email).then((user) => {
       //if user not found
       if (!user) {
         //unique email
         const user = {
-          id: req.body.uid,
+          id: req.uid,
           rol: "user",
           name: req.body.name,
           last_name: req.body.last_name,
