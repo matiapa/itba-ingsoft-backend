@@ -99,12 +99,13 @@ app.post("/register", (req, res) => {
             country: req.body.country,
             province: req.body.province,
             location: req.body.location,
-            zip: req.body,
+            zip: req.body.zip,
             street: req.body.street,
             street_number: req.body.street_number,
           };
-          User.createPersonalInfo(personal_info);
-          res.status(201).end();
+          User.createPersonalInfo(personal_info).then(() => {
+            res.status(201).end();
+          });
         });
       } else {
         //email in use

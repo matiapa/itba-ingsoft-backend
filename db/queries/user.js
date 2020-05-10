@@ -4,10 +4,17 @@ const knex = require("../knex.js");
 
 module.exports = {
   getAllUsers() {
-    return knex("users");
+    return knex("users").innerJoin(
+      "personal_info",
+      "users.id",
+      "personal_info.user_id"
+    );
   },
   getUserById(id) {
-    return knex("users").where("id", id).first();
+    return knex("users")
+      .innerJoin("personal_info", "users.id", "personal_info.user_id")
+      .where("id", id)
+      .first();
   },
   getUserByEmail(email) {
     return knex("users").where("email", email).first();
