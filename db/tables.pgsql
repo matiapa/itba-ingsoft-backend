@@ -1,6 +1,7 @@
+
 create table users
 (
-    id        integer primary key,
+    id        text primary key,
     rol       text not null,
     name      text not null,
     last_name text not null,
@@ -10,7 +11,7 @@ create table users
 
 
 create table personal_info(
-    user_id integer references users(id) on delete cascade,
+    user_id text references users(id) on delete cascade,
     document_type text not null,
     document text unique,
     telephone_type text not null,
@@ -18,6 +19,7 @@ create table personal_info(
     country text not null,
     province text not null,
     location text not null,
+    zip text not null,
     street text not null,
     street_number text not null,
     primary key(user_id)
@@ -63,7 +65,7 @@ create table lotPhotos(
 
 create table auction_room(
     id serial primary key,
-    owner_id integer not null references users(id) on delete set null,
+    owner_id text not null references users(id) on delete set null,
     lot_id integer not null references lots(id) on delete set null,
     creation_date timestamp,
     duration interval,
@@ -74,7 +76,7 @@ create table auction_room(
 );
 
 create table bid(
-    user_id integer not null references users(id) on delete cascade,
+    user_id text not null references users(id) on delete cascade,
     ar_id integer  not null references auction_room(id) on delete cascade,
     amount decimal not null,
     time timestamp  not null,

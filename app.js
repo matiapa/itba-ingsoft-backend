@@ -45,17 +45,17 @@ app.post("/logout", auth.closeSession);
 //register validations
 function validateUser(user_info) {
   const schema = {
-    uid: Joi.number().integer(),
+    uid: Joi.string().required(),
     name: Joi.string().min(2).max(30).required(),
     last_name: Joi.string().min(2).max(30).required(),
     email: Joi.string().email({ minDomainSegments: 2 }).required(),
     document_type: Joi.string()
-      .valid("dni", "ci", "pasaporte")
+      .valid("nid", "ic", "passport")
       .insensitive()
       .required(),
     document: Joi.string().length(8).required(),
     telephone_type: Joi.string()
-      .valid("particular", "celular")
+      .valid("particular", "mobile")
       .insensitive()
       .required(),
     country: Joi.string().required(),
