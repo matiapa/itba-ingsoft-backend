@@ -30,8 +30,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 module.exports = app;
 
-app.use('/', auth.checkAuth)
-app.get('/', (req, res) => {
+app.use('/test', auth.checkAuth)
+app.get('/test', (req, res) => {
     res.json({
         message: 'Hello World!'
     })

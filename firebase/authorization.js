@@ -1,7 +1,11 @@
-const credentials = require('./credentials.json');
+const connection = require('./connection.json');
+const serviceAccount = require('./credentials.json');
 const admin = require('firebase-admin');
 
-admin.initializeApp(credentials);
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: connection.databaseURL
+});
 
 function createSession(req, res) {
     const idToken = req.body.idToken.toString();
@@ -13,6 +17,7 @@ function createSession(req, res) {
         res.cookie('session', sessionCookie, options);
         res.end(JSON.stringify({status: 'success'}));
     }, error => {
+        console.log(error);
         res.status(401).send('UNAUTHORIZED REQUEST!');
     });
 }
