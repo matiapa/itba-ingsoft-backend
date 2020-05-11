@@ -58,7 +58,7 @@ router.delete("/:id", (req, res) => {
   });
 });
 
-router.post("/:id", (req, res) => {
+router.put("/:id", (req, res) => {
   const result = Joi.validate(req.body, schemas.user);
   if (result.error) {
     return res.status(400).send(result.error.details[0].message);
@@ -69,7 +69,7 @@ router.post("/:id", (req, res) => {
   }
 });
 
-router.post("/:id/personal_info", (req, res) => {
+router.put("/:id/personal_info", (req, res) => {
   const result = Joi.validate(req.body, schemas.personal_info);
   if (result.error) {
     return res.status(400).send(result.error.details[0].message);
