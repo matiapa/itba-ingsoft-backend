@@ -1,5 +1,5 @@
 const knex = require("../knex.js");
-const Joi = require("joi");
+
 //tables
 
 module.exports = {

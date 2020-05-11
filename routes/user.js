@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../db/queries/user.js");
-
+const Joi = require("joi");
 router.get("/", (req, res) => {
   User.getAllUsers().then((users) => {
     res.status(200).json(users);
@@ -28,7 +28,7 @@ router.get("/:id/personal_info", (req, res) => {
   });
 });
 
-router.delete("/id/:id", (req, res) => {
+router.delete("/:id", (req, res) => {
   User.getUserById(req.params.id).then((user) => {
     if (user) {
       User.deleteUser(req.params.id).then(() => {
@@ -50,8 +50,9 @@ router.post("/:id", (req, res) => {
   if (result.error) {
     return res.status(400).send(result.error.details[0].message);
   } else {
-    User.updateUser(req.params.id, req.body);
-    res.status(200).end();
+    User.updateUser(req.params.id, req.body).then((info) => {
+      res.status(200).json(info);
+    });
   }
 });
 
@@ -78,8 +79,9 @@ router.post("/:id/personal_info", (req, res) => {
   if (result.error) {
     return res.status(400).send(result.error.details[0].message);
   } else {
-    User.updatePersonalInfo(req.params.id, req.body);
-    res.status(200).end();
+    User.updatePersonalInfo(req.params.id, req.body).then((info) => {
+      res.status(200).json(info);
+    });
   }
 });
 router.update;
