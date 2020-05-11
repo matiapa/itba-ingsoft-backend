@@ -3,7 +3,8 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var auth = require("./firebase/authorization.js");
-var Joi = require("joi");
+var schemas = require("./db/schemas.js");
+const Joi = require("joi");
 var User = require("./db/queries/user.js");
 var user = require("./routes/user");
 var app = express();
@@ -46,25 +47,8 @@ app.post("/logout", auth.closeSession);
 //register validations
 function validateUser(user_info) {
   const schema = {
-    name: Joi.string().min(2).max(30).required(),
-    last_name: Joi.string().min(2).max(30).required(),
-    email: Joi.string().email({ minDomainSegments: 2 }).required(),
-    document_type: Joi.string()
-      .valid("dni", "ci", "passport")
-      .insensitive()
-      .required(),
-    document: Joi.string().length(8).required(),
-    telephone_type: Joi.string()
-      .valid("landline", "mobile")
-      .insensitive()
-      .required(),
-    telephone: Joi.number().integer().required(),
-    country: Joi.string().required(),
-    province: Joi.string().required(),
-    location: Joi.string().required(),
-    zip: Joi.number().integer().required(),
-    street: Joi.string().required(),
-    street_number: Joi.string().required(),
+    ...schemas.user,
+    ...schemas.personal_info,
   };
   return Joi.validate(user_info, schema);
 }

@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../db/queries/user.js");
+const schemas = require("../db/schemas.js");
 const Joi = require("joi");
 router.get("/", (req, res) => {
   User.getAllUsers().then((users) => {
@@ -41,12 +42,7 @@ router.delete("/:id", (req, res) => {
 });
 
 router.post("/:id", (req, res) => {
-  const schema = {
-    name: Joi.string().min(2).max(30).required(),
-    last_name: Joi.string().min(2).max(30).required(),
-    email: Joi.string().email({ minDomainSegments: 2 }).required(),
-  };
-  const result = Joi.validate(req.body, schema);
+  const result = Joi.validate(req.body, schemas.user);
   if (result.error) {
     return res.status(400).send(result.error.details[0].message);
   } else {
@@ -57,25 +53,7 @@ router.post("/:id", (req, res) => {
 });
 
 router.post("/:id/personal_info", (req, res) => {
-  const schema = {
-    document_type: Joi.string()
-      .valid("dni", "ci", "passport")
-      .insensitive()
-      .required(),
-    document: Joi.string().length(8).required(),
-    telephone_type: Joi.string()
-      .valid("landline", "mobile")
-      .insensitive()
-      .required(),
-    telephone: Joi.number().integer().required(),
-    country: Joi.string().required(),
-    province: Joi.string().required(),
-    location: Joi.string().required(),
-    zip: Joi.number().integer().required(),
-    street: Joi.string().required(),
-    street_number: Joi.string().required(),
-  };
-  const result = Joi.validate(req.body, schema);
+  const result = Joi.validate(req.body, schemas.personal_info);
   if (result.error) {
     return res.status(400).send(result.error.details[0].message);
   } else {
