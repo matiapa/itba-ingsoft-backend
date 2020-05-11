@@ -1,5 +1,5 @@
 const knex = require("../knex.js");
-
+const Joi = require("joi");
 //tables
 
 module.exports = {
@@ -34,5 +34,12 @@ module.exports = {
   },
   getPersonalInfo(id) {
     return knex("personal_info").where("user_id", id).first();
+  },
+
+  updateUser(id, info) {
+    return knex("users").where("id", id).update(info, "*");
+  },
+  updatePersonalInfo(id, info) {
+    return knex("personal_info").where("user_id", id).update(info, "*");
   },
 };
