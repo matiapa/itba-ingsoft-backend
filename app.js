@@ -47,8 +47,8 @@ app.post("/logout", auth.closeSession);
 //register validations
 function validateUser(user_info) {
   const schema = {
-    ...schemas.user,
-    ...schemas.personal_info,
+    ...schemas.user_required,
+    ...schemas.personal_info_required,
   };
   return Joi.validate(user_info, schema);
 }
@@ -67,7 +67,7 @@ app.post("/register", (req, res) => {
       if (!user) {
         //unique email
         const user = {
-          id: req.uid,
+          id: req.user.uid,
           rol: "user",
           name: req.body.name,
           last_name: req.body.last_name,

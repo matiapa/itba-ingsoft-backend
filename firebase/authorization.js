@@ -15,9 +15,8 @@ function createSession(req, res) {
     .then((sessionCookie) => {
         const options = { maxAge: expiresIn, httpOnly: true, secure: false };
         res.cookie('session', sessionCookie, options);
-        res.end(JSON.stringify({status: 'success'}));
+        res.status(204).end();
     }, error => {
-        console.log(error);
         res.status(401).send('UNAUTHORIZED REQUEST!');
     });
 }
@@ -28,7 +27,7 @@ function checkAuth(req, res, next) {
     admin.auth().verifySessionCookie(sessionCookie, true)
     .then((decodedClaims) => 
     {
-        req.uid = decodedClaims.uid;
+        req.user = decodedClaims;
         next();
     })
     .catch(error => {

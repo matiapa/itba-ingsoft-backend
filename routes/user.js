@@ -3,18 +3,35 @@ const router = express.Router();
 const User = require("../db/queries/user.js");
 const schemas = require("../db/schemas.js");
 const Joi = require("joi");
+const auth = require("../firebase/authorization");
+
+function userInfoAuthorization(req, res, next) {
+  if(req.user.uid == req.params.id)
+    next();
+  else
+    res.sendStatus(403);
+}
+
+router.use(auth.checkAuth);
+
 router.get("/", (req, res) => {
   User.getAllUsers().then((users) => {
     res.status(200).json(users);
   });
 });
 
+router.get("/id", (req, res) => {
+  res.status(200).json({uid: req.user.uid});
+});
+
+router.use("/:id", userInfoAuthorization);
+
 router.get("/:id", (req, res) => {
   User.getUserById(req.params.id).then((user) => {
     if (user) {
       res.status(200).json(user);
     } else {
-      res.status(400).send("USER NOT FOUND");
+      res.status(404).send("USER NOT FOUND");
     }
   });
 });
@@ -62,5 +79,5 @@ router.post("/:id/personal_info", (req, res) => {
     });
   }
 });
-router.update;
+
 module.exports = router;
