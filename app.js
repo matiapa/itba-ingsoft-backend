@@ -3,8 +3,10 @@ var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 var auth = require("./firebase/authorization.js");
-var Joi = require("joi");
+var schemas = require("./db/schemas.js");
+const Joi = require("joi");
 var User = require("./db/queries/user.js");
+var user = require("./routes/user");
 var app = express();
 
 app.use(logger("dev"));
@@ -45,25 +47,8 @@ app.post("/logout", auth.closeSession);
 //register validations
 function validateUser(user_info) {
   const schema = {
-    name: Joi.string().min(2).max(30).required(),
-    last_name: Joi.string().min(2).max(30).required(),
-    email: Joi.string().email({ minDomainSegments: 2 }).required(),
-    document_type: Joi.string()
-      .valid("nid", "ic", "passport")
-      .insensitive()
-      .required(),
-    document: Joi.string().length(8).required(),
-    telephone_type: Joi.string()
-      .valid("particular", "mobile")
-      .insensitive()
-      .required(),
-    telephone: Joi.number().integer().required(),
-    country: Joi.string().required(),
-    province: Joi.string().required(),
-    location: Joi.string().required(),
-    zip: Joi.number().integer().required(),
-    street: Joi.string().required(),
-    street_number: Joi.string().required(),
+    ...schemas.user_required,
+    ...schemas.personal_info_required,
   };
   return Joi.validate(user_info, schema);
 }
@@ -77,16 +62,16 @@ app.post("/register", (req, res) => {
     return res.status(400).send(result.error.details[0].message);
   } else {
     //check if email is in use
-    User.getUserByEmail(req.body.email).then((user) => {
+    User.getUserByEmail(req.user.email).then((user) => {
       //if user not found
       if (!user) {
         //unique email
         const user = {
-          id: req.uid,
+          id: req.user.uid,
           rol: "user",
           name: req.body.name,
           last_name: req.body.last_name,
-          email: req.body.email,
+          email: req.user.email,
         };
         User.createUser(user).then((id) => {
           const personal_info = {
@@ -98,11 +83,13 @@ app.post("/register", (req, res) => {
             country: req.body.country,
             province: req.body.province,
             location: req.body.location,
+            zip: req.body.zip,
             street: req.body.street,
             street_number: req.body.street_number,
           };
-          User.createPersonalInfo(personal_info);
-          res.status(201).end();
+          User.createPersonalInfo(personal_info).then(() => {
+            res.status(201).end();
+          });
         });
       } else {
         //email in use
@@ -111,3 +98,5 @@ app.post("/register", (req, res) => {
     });
   }
 });
+
+app.use("/user", user);

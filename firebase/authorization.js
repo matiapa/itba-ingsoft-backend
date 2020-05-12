@@ -1,6 +1,7 @@
 const connection = require('./connection.json');
 const serviceAccount = require('./credentials.json');
 const admin = require('firebase-admin');
+const User = require("../db/queries/user");
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
@@ -8,16 +9,22 @@ admin.initializeApp({
 });
 
 function createSession(req, res) {
-    const idToken = req.body.idToken.toString();
+    const idToken = req.body.idToken;
     const expiresIn = 1000 * 60 * 60 * 24;
 
     admin.auth().createSessionCookie(idToken, {expiresIn})
     .then((sessionCookie) => {
         const options = { maxAge: expiresIn, httpOnly: true, secure: false };
         res.cookie('session', sessionCookie, options);
-        res.end(JSON.stringify({status: 'success'}));
+
+        admin.auth().verifySessionCookie(sessionCookie, true)
+        .then((decodedClaims) => User.getUserById(decodedClaims.uid).then((user) => {
+            if(user)
+                res.status(200).end();
+            else
+                res.status(404).end();
+        }));
     }, error => {
-        console.log(error);
         res.status(401).send('UNAUTHORIZED REQUEST!');
     });
 }
@@ -28,7 +35,7 @@ function checkAuth(req, res, next) {
     admin.auth().verifySessionCookie(sessionCookie, true)
     .then((decodedClaims) => 
     {
-        req.uid = decodedClaims.uid;
+        req.user = decodedClaims;
         next();
     })
     .catch(error => {
