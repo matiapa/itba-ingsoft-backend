@@ -10,7 +10,7 @@ function makeRequired(schema) {
 const user = {
   name: Joi.string().min(2).max(30),
   last_name: Joi.string().min(2).max(30),
-  email: Joi.string().email({ minDomainSegments: 2 }),
+  //email: Joi.string().email({ minDomainSegments: 2 }),
 };
 
 const user_required = makeRequired(user);

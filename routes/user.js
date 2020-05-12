@@ -41,7 +41,7 @@ router.get("/:id/personal_info", (req, res) => {
     if (personal_info) {
       res.status(200).json(personal_info);
     } else {
-      res.status(400).send("USER NOT FOUND");
+      res.status(404).send("USER NOT FOUND");
     }
   });
 });
