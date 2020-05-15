@@ -1,3 +1,4 @@
 node_modules/
 knexfile.json
+knexfile.js
 firebase/credentials.json

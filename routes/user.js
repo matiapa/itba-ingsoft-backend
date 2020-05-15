@@ -6,10 +6,8 @@ const Joi = require("joi");
 const auth = require("../firebase/authorization");
 
 function userInfoAuthorization(req, res, next) {
-  if(req.user.uid == req.params.id)
-    next();
-  else
-    res.sendStatus(403);
+  if (req.user.uid == req.params.id) next();
+  else res.sendStatus(403);
 }
 
 router.use(auth.checkAuth);
@@ -21,7 +19,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/id", (req, res) => {
-  res.status(200).json({uid: req.user.uid});
+  res.status(200).json({ uid: req.user.uid });
 });
 
 router.use("/:id", userInfoAuthorization);
@@ -41,7 +39,7 @@ router.get("/:id/personal_info", (req, res) => {
     if (personal_info) {
       res.status(200).json(personal_info);
     } else {
-      res.status(400).send("USER NOT FOUND");
+      res.status(404).send("USER NOT FOUND");
     }
   });
 });
