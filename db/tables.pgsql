@@ -43,17 +43,18 @@ create table auction(
 );
 
 
-create table expertAsign(
+create table expert_asign(
     id_exp integer not null references experts(id) on delete cascade,
     id_ac integer not null references auction(id) on delete cascade,
-    name text,
+ 
     primary key(id_exp,id_ac)
 );
 
-create table lots(
+create table lot(
     id serial primary key,
     name text,
     descripcion text,
+    state text,
     auction_id integer not null references auction(id) on delete cascade
 );
 
@@ -64,15 +65,11 @@ create table lotPhotos(
 );
 
 create table auction_room(
-    id serial primary key,
     owner_id text not null references users(id) on delete set null,
     lot_id integer not null references lots(id) on delete set null,
+    highest_bid decimal references bid(id) on delete set null,
     creation_date timestamp,
     duration interval,
-    state text
-
-
-
 );
 
 create table bid(
