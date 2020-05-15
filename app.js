@@ -62,7 +62,7 @@ app.post("/register", (req, res) => {
     return res.status(400).send(result.error.details[0].message);
   } else {
     //check if email is in use
-    User.getUserByEmail(req.body.email).then((user) => {
+    User.getUserByEmail(req.user.email).then((user) => {
       //if user not found
       if (!user) {
         //unique email
@@ -71,7 +71,7 @@ app.post("/register", (req, res) => {
           rol: "user",
           name: req.body.name,
           last_name: req.body.last_name,
-          email: req.body.email,
+          email: req.user.email,
         };
         User.createUser(user).then((id) => {
           const personal_info = {
