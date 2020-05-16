@@ -45,7 +45,7 @@ create table lot(
 create table auction(
 
     lot_id integer not null references lot(id) on delete set null,
-   last_bid_id integer,
+
     creation_date timestamp,
     deadline timestamp,
     primary key(lot_id)
@@ -77,5 +77,3 @@ create table bid
     time    timestamp not null,
     primary key (id,user_id, auc_id, time)
 );
-ALTER TABLE auction
-ADD FOREIGN KEY (last_bid_id) REFERENCES bid(id);
