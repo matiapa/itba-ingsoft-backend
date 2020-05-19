@@ -6,6 +6,7 @@ module.exports = {
   createAuction(info) {
     return knex("auction").insert(info);
   },
+  //auction por lot id
   getAuctionById(id) {
     return knex()
       .select(
@@ -23,7 +24,27 @@ module.exports = {
       .where("lot.id", id)
       .first();
   },
-  getAuctionOrderByDeadline(category = null, offset = null, limit = null) {
+  //auction por owner_id
+  getAuctionByOwnerId(owner_id) {
+    return knex()
+      .select(
+        "lot_id",
+        "creation_date",
+        "duration",
+        "name",
+        "category",
+        "description",
+        "state"
+      )
+      .from("lot")
+      .innerJoin("auction", "lot.id", "auction.lot_id")
+      .where("owner_id", owner_id)
+      .first();
+  },
+  //auctions ordenados por cual termina antes,  podes dar category para filtrar,
+  //offset: numero de auction desde la cual muestra (para devolver por pagina),
+  //limit: cantidad de auctions que devuelve (devolver 1 pagina)
+  getAuctionsOrderByDeadline(category = null, offset = null, limit = null) {
     return knex()
       .select(
         "lot_id",
@@ -45,7 +66,11 @@ module.exports = {
         return query.limit(limit).offset(offset);
       });
   },
-  getAuctionOrderByPopularity(category = null, offset = null, limit = null) {
+
+  //     auctions ordenados por cantidad de bids,  podes dar category para filtrar,
+  //   offset: numero de auction desde la cual muestra (para devolver por pagina),
+  // limit: cantidad de auctions que devuelve (devolver 1 pagina)
+  getAuctionsOrderByPopularity(category = null, offset = null, limit = null) {
     return knex()
       .select(
         "lot_id",
