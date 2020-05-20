@@ -1,0 +1,21 @@
+POST /lot
+{category, type, description}
+GET /lot/:id
+{type, auction_id, description}
+DELETE /lot/:id
+PUT /lot/:id
+{category, type, description}
+PUT /lot/:id
+
+
+GET /auction/:id
+POST /auction/:id
+DELETE /auction/:id
+PUT /auction/:id
+
+
+GET /bid/:ar_id
+POST /bid/:ar_id
+PUT /bid/:ar_id
+DELETE /bid/:ar_id
+
