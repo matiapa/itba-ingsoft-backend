@@ -6,6 +6,13 @@ module.exports = {
   createExpert(info) {
     return knex("expert").insert(info, "*");
   },
+  
+  getExpertById(id) {
+    return knex("expert")
+      .innerJoin("expert.id", "expert.name", "expert.last_name", "expert.category")
+      .where("id", id)
+      .first();
+  },
 
   deleteExpert(id) {
     return knex("expert").where("id", id).del();

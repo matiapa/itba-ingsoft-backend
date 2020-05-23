@@ -6,8 +6,14 @@ var auth = require("./firebase/authorization.js");
 var schemas = require("./db/schemas.js");
 const Joi = require("joi");
 var User = require("./db/queries/user.js");
-var user = require("./routes/user");
 var app = express();
+
+var user = require("./routes/user");
+var auction = require("./routes/auction");
+var bid = require("./routes/bid");
+var expert = require("./routes/expert");
+var lot = require("./routes/lot");
+
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -100,3 +106,7 @@ app.post("/register", (req, res) => {
 });
 
 app.use("/user", user);
+app.use("/auction", auction);
+app.use("/bid", bid);
+app.use("/expert", expert);
+app.use("/lot", lot);
