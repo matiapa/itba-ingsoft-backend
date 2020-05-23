@@ -45,10 +45,10 @@ const bid = {
 };
 
 const auction = {
-  lot_id: Joi.integer().required(),
-  last_bid_id: Joi.integer().required(),
-  creation_date: Joi.date().timestamp.required(),
-  deadline: Joi.date().timestamp.required(),
+  lot_id: Joi.number().integer().required(),
+  last_bid_id: Joi.number().integer().required(),
+  creation_date: Joi.date().timestamp().required(),
+  deadline: Joi.date().timestamp().required(),
 };
 
 // la id es serial en la base de datos
