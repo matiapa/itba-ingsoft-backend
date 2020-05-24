@@ -34,10 +34,11 @@ router.delete("/:ar_id", (req, res) => {
 */
 
 router.post("/", (req, res) => {
+    var date = new Date().toISOString();
     const bid = {
         user_id: req.user.uid,
         amount: req.body.amount,
-        time: req.body.time,            //nodejs server time iso8601
+        time: date,            //nodejs server time iso8601
     };
     Bid.createBid(bid).then(() => {
         res.status(201).end();

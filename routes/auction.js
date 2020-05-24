@@ -9,9 +9,11 @@ router.use(auth.checkAuth);
 
 
 router.post("/", (req, res) => {
+  var date = new Date().toISOString();
   const auction = {
     category: req.body.category,
-    name: req.body.name
+    name: req.body.name,
+    time: date
   }; 
   Auction.createAuction(auction).then(() => {
     res.status(201).end();
