@@ -30,11 +30,9 @@ const personal_info = {
 const personal_info_required = makeRequired(personal_info);
 // la id es serial en la base de datos
 const lot = {
-  owner_id: Joi.string(),
   name: Joi.string(),
   description: Joi.string(),
   category: Joi.string(),
-  state: Joi.string(),
 };
 
 const lot_required = makeRequired(lot);
@@ -54,9 +52,9 @@ const auction = {
 
 // la id es serial en la base de datos
 const expert = {
-  name: Joi.string().required(),
-  last_name: Joi.string().required(),
-  speciality: Joi.string().required(),
+  name: Joi.string(),
+  last_name: Joi.string(),
+  speciality: Joi.string(),
 };
 
 const expert_required = makeRequired(expert);

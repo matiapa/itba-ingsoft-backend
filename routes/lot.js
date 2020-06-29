@@ -2,18 +2,34 @@ const express = require("express");
 const router = express.Router();
 const Lot = require("../db/queries/lot.js");
 const auth = require("../firebase/authorization");
+const schemas = require("../db/schemas.js");
+const Joi = require("joi");
 
 router.use(auth.checkAuth);
 
 router.post("/", (req, res) => {
-  const lot = {
-      name: req.body.name,
-      description: req.body.description
+  Joi.validate(req.body, schemas.lot_required)
+  .then((data) => {
+    const lot = {
+      owner_id: req.user.uid,
+      name: data.name,
+      description: data.description,
+      state: "POSTED",
+      category: data.category
     };
-  Lot.createLot(lot).then(() => {
+    Lot.createLot(lot).then(() => {
       res.status(201).end();
+    });
+  }, (err) => {
+    console.log(err);
+    res.status(400).send(err.details[0].message);
   });
-  res.status(400).end();
+});
+
+router.get("/byMe", (req,res) => {
+  Lot.getLotsByOwner(req.user.uid).then((lots) => {
+    res.status(200).json(lots);
+  })
 });
 
 router.get("/:id", (req,res) => {
@@ -39,8 +55,13 @@ router.delete("/:id", (req, res) => {
 });
 
 router.put("/:id", (req,res) => {
-  Lot.updateLot(req.params.id, req.body).then((info) => {
+  Joi.validate(req.body, schemas.lot)
+  .then((data) => {
+    Lot.updateLot(req.params.id, data).then((info) => {
       res.status(200).json(info);
+    })
+  }, (err) => {
+    res.status(400).send(err.details[0].message);
   });
 });
 
