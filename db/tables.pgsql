@@ -1,4 +1,3 @@
-
 create table users
 (
     id        text primary key,
@@ -42,14 +41,40 @@ create table lot(
     category text
 
 );
+
+
+create table following(
+    follower_id text references users(id) not null,
+    followed_id text references users(id) not null,
+    primary key (follower_id,
+                followed_id)
+);
+
 create table auction(
 
-    lot_id integer not null references lot(id) on delete cascade,
+    lot_id integer not null references lot(id) on delete set null,
 
     creation_date timestamp,
     deadline timestamp,
     primary key(lot_id)
 );
+
+
+create table auction_favorites(
+    user_id text references users(id) not null,
+    auc_id integer references auction(lot_id) not null,
+    primary key (user_id,auc_id)
+);
+
+create table user_rating(
+    id serial primary key ,
+    to_id text references users(id) not null,
+    from_id text references users(id) not null,
+    comment text not null,
+    rating decimal not null check(rating between 0 and 5)
+);
+
+
 
 
 create table expert_asign(

@@ -100,4 +100,29 @@ module.exports = {
       .limit(limit)
       .offset(offset);
   },
+    //auctions ordenados por cration date descendiente,  podes dar category para filtrar,
+  //offset: numero de auction desde la cual muestra (para devolver por pagina),
+  //limit: cantidad de auctions que devuelve (devolver 1 pagina)
+  getAuctionsOrderByCreationDate(category = null, offset = null, limit = null) {
+    return knex()
+      .select(
+        "lot_id",
+        "creation_date",
+        "deadline",
+        "owner_id",
+        "name",
+        "category",
+        "description",
+        "state"
+      )
+      .from("lot")
+      .innerJoin("auction", "lot.id", "auction.lot_id")
+      .orderBy("creation_date", "desc")
+      .then((query) => {
+        return category == null ? query : query.where("category", category);
+      })
+      .then((query) => {
+        return query.limit(limit).offset(offset);
+      });
+  },
 };
