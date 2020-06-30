@@ -57,6 +57,13 @@ const expert = {
   speciality: Joi.string(),
 };
 
+const auction_list = {
+  sort: Joi.string().valid("deadline", "popularity").required(),
+  offset: Joi.number().integer().min(0).required(),
+  limit: Joi.number().integer().positive().required(),
+  category: Joi.string(),
+};
+
 const expert_required = makeRequired(expert);
 
 module.exports = {
@@ -69,4 +76,5 @@ module.exports = {
   auction,
   expert,
   expert_required,
+  auction_list,
 };

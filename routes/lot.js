@@ -4,7 +4,7 @@ const Lot = require("../db/queries/lot.js");
 const auth = require("../firebase/authorization");
 const schemas = require("../db/schemas.js");
 const Joi = require("joi");
-
+const Auction = require("../db/queries/auction.js");
 router.use(auth.checkAuth);
 
 router.post("/", (req, res) => {
@@ -17,8 +17,16 @@ router.post("/", (req, res) => {
       state: "POSTED",
       category: data.category
     };
-    Lot.createLot(lot).then(() => {
-      res.status(201).end();
+    Lot.createLot(lot).then((l) => {
+      l = l[0];
+      auction = {
+        lot_id: l.id,
+        creation_date: new Date().toISOString(),
+        deadline: new Date().toISOString()
+      };
+      Auction.createAuction(auction).then(() => {
+        res.status(201).json({id: l.id}).end();
+      });
     });
   }, (err) => {
     console.log(err);
@@ -26,31 +34,35 @@ router.post("/", (req, res) => {
   });
 });
 
-router.get("/byMe", (req,res) => {
-  Lot.getLotsByOwner(req.user.uid).then((lots) => {
+router.get("/byUser/:uid", (req,res) => {
+  Lot.getLotsByOwner(req.params.uid).then((lots) => {
     res.status(200).json(lots);
   })
 });
 
 router.get("/:id", (req,res) => {
   Lot.getLotById(req.params.id).then((lot) => {
-      if(lot){
-          res.status(200).json(lot);
-      }else{
-          res.status(404).send("LOT NOT FOUND");
-      }
+    if(lot){
+        res.status(200).json(lot);
+    }else{
+        res.status(404).send("LOT NOT FOUND");
+    }
   });
 });
 
 router.delete("/:id", (req, res) => {
-  Lot.getLotById(req.params.id).then((lot) => {
-      if(lot) {
-          Lot.deleteLot(req.params.id).then(() => {
-              res.status(200).end();
-          });
-      }else{
-          res.status(404).send("LOT NOT FOUND");
-      }
+  Joi.validate(req.params, { id : Joi.number().integer() })
+  .then(
+    Lot.getLotById(req.params.id).then((lot) => {
+    if(lot) {
+        Lot.deleteLot(lot.id).then(() => {
+            res.status(200).end();
+        });
+    } else{
+        res.status(404).send("LOT NOT FOUND");
+    }
+  }), (err) => {
+    res.status(400).send(err.details[0].message);
   });
 });
 

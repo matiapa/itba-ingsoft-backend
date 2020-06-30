@@ -12,7 +12,7 @@ module.exports = {
       .select(
         "lot_id",
         "creation_date",
-        "duration",
+        "deadline",
         "owner_id",
         "name",
         "category",
@@ -30,7 +30,7 @@ module.exports = {
       .select(
         "lot_id",
         "creation_date",
-        "duration",
+        "deadline",
         "name",
         "category",
         "description",
@@ -39,7 +39,6 @@ module.exports = {
       .from("lot")
       .innerJoin("auction", "lot.id", "auction.lot_id")
       .where("owner_id", owner_id)
-      .first();
   },
   //auctions ordenados por cual termina antes,  podes dar category para filtrar,
   //offset: numero de auction desde la cual muestra (para devolver por pagina),
@@ -59,12 +58,11 @@ module.exports = {
       .from("lot")
       .innerJoin("auction", "lot.id", "auction.lot_id")
       .orderBy("deadline", "asc")
-      .then((query) => {
+      .modify((query) => {
         return category == null ? query : query.where("category", category);
       })
-      .then((query) => {
-        return query.limit(limit).offset(offset);
-      });
+      .limit(limit)
+      .offset(offset);
   },
 
   //     auctions ordenados por cantidad de bids,  podes dar category para filtrar,
@@ -81,19 +79,25 @@ module.exports = {
         "category",
         "description",
         "state",
-        knex.raw("count(*) as bid_count")
       )
       .from("lot")
       .innerJoin("auction", "lot.id", "auction.lot_id")
-      .then((query) => {
+      .leftJoin("bid", "lot_id", "bid.auc_id")
+      .groupBy(
+        "lot_id",
+        "creation_date",
+        "deadline",
+        "owner_id",
+        "name",
+        "category",
+        "description",
+        "state"
+      )
+      .orderBy(knex.raw("count(*)"), "desc")
+      .modify((query) => {
         return category == null ? query : query.where("category", category);
       })
-      .then((query) => {
-        return query
-          .groupBy("lot_id")
-          .orderBy("bid_count", "desc")
-          .limit(limit)
-          .offset(offset);
-      });
+      .limit(limit)
+      .offset(offset);
   },
 };

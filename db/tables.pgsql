@@ -35,7 +35,7 @@ create table expert(
 );
 create table lot(
     id serial primary key,
-    owner_id text not null references users(id) on delete set null,
+    owner_id text not null references users(id) on delete cascade,
     name text,
     description text,
     state text,
@@ -44,7 +44,7 @@ create table lot(
 );
 create table auction(
 
-    lot_id integer not null references lot(id) on delete set null,
+    lot_id integer not null references lot(id) on delete cascade,
 
     creation_date timestamp,
     deadline timestamp,

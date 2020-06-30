@@ -19,6 +19,6 @@ module.exports = {
     .where("owner_id", uid);
   },
   getLotById(id) {
-    return knex("lot").where("id", id);
+    return knex("lot").where("id", id).first();
   }
 };
