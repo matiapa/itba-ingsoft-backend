@@ -54,6 +54,16 @@ router.get("/:id", (req, res) => {
   });
 });
 
+router.get("/categories", (req, res) => {
+  Lot.getCategories().then((categories) => {
+    if (categories) {
+      res.status(200).json(categories);
+    } else {
+      res.status(404).send("CATEGORIES NOT FOUND");
+    }
+  });
+});
+
 router.delete("/:id", (req, res) => {
   Joi.validate(req.params, { id: Joi.number().integer() }).then(
     Lot.getLotById(req.params.id).then((lot) => {

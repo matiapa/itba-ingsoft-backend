@@ -38,7 +38,7 @@ module.exports = {
       )
       .from("lot")
       .innerJoin("auction", "lot.id", "auction.lot_id")
-      .where("owner_id", owner_id)
+      .where("owner_id", owner_id);
   },
   //auctions ordenados por cual termina antes,  podes dar category para filtrar,
   //offset: numero de auction desde la cual muestra (para devolver por pagina),
@@ -78,7 +78,7 @@ module.exports = {
         "name",
         "category",
         "description",
-        "state",
+        "state"
       )
       .from("lot")
       .innerJoin("auction", "lot.id", "auction.lot_id")
@@ -100,7 +100,7 @@ module.exports = {
       .limit(limit)
       .offset(offset);
   },
-    //auctions ordenados por cration date descendiente,  podes dar category para filtrar,
+  //auctions ordenados por cration date descendiente,  podes dar category para filtrar,
   //offset: numero de auction desde la cual muestra (para devolver por pagina),
   //limit: cantidad de auctions que devuelve (devolver 1 pagina)
   getAuctionsOrderByCreationDate(category = null, offset = null, limit = null) {
@@ -118,11 +118,10 @@ module.exports = {
       .from("lot")
       .innerJoin("auction", "lot.id", "auction.lot_id")
       .orderBy("creation_date", "desc")
-      .then((query) => {
+      .modify((query) => {
         return category == null ? query : query.where("category", category);
       })
-      .then((query) => {
-        return query.limit(limit).offset(offset);
-      });
+      .limit(limit)
+      .offset(offset);
   },
 };
