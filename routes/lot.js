@@ -8,73 +8,80 @@ const Auction = require("../db/queries/auction.js");
 router.use(auth.checkAuth);
 
 router.post("/", (req, res) => {
-  Joi.validate(req.body, schemas.lot_required)
-  .then((data) => {
-    const lot = {
-      owner_id: req.user.uid,
-      name: data.name,
-      description: data.description,
-      state: "POSTED",
-      category: data.category
-    };
-    Lot.createLot(lot).then((l) => {
-      l = l[0];
-      auction = {
-        lot_id: l.id,
-        creation_date: new Date().toISOString(),
-        deadline: new Date().toISOString()
+  Joi.validate(req.body, schemas.lot_required).then(
+    (data) => {
+      const lot = {
+        owner_id: req.user.uid,
+        name: data.name,
+        description: data.description,
+        state: "POSTED",
+        category: data.category,
+        initial_price: data.initial_price,
+        quantity: data.quantity,
       };
-      Auction.createAuction(auction).then(() => {
-        res.status(201).json({id: l.id}).end();
+      Lot.createLot(lot).then((l) => {
+        l = l[0];
+        auction = {
+          lot_id: l.id,
+          creation_date: new Date(),
+          deadline: new Date().addDays(7),
+        };
+        Auction.createAuction(auction).then(() => {
+          res.status(201).json({ id: l.id }).end();
+        });
       });
-    });
-  }, (err) => {
-    console.log(err);
-    res.status(400).send(err.details[0].message);
+    },
+    (err) => {
+      console.log(err);
+      res.status(400).send(err.details[0].message);
+    }
+  );
+});
+
+router.get("/byUser/:uid", (req, res) => {
+  Lot.getLotsByOwner(req.params.uid).then((lots) => {
+    res.status(200).json(lots);
   });
 });
 
-router.get("/byUser/:uid", (req,res) => {
-  Lot.getLotsByOwner(req.params.uid).then((lots) => {
-    res.status(200).json(lots);
-  })
-});
-
-router.get("/:id", (req,res) => {
+router.get("/:id", (req, res) => {
   Lot.getLotById(req.params.id).then((lot) => {
-    if(lot){
-        res.status(200).json(lot);
-    }else{
-        res.status(404).send("LOT NOT FOUND");
+    if (lot) {
+      res.status(200).json(lot);
+    } else {
+      res.status(404).send("LOT NOT FOUND");
     }
   });
 });
 
 router.delete("/:id", (req, res) => {
-  Joi.validate(req.params, { id : Joi.number().integer() })
-  .then(
+  Joi.validate(req.params, { id: Joi.number().integer() }).then(
     Lot.getLotById(req.params.id).then((lot) => {
-    if(lot) {
+      if (lot) {
         Lot.deleteLot(lot.id).then(() => {
-            res.status(200).end();
+          res.status(200).end();
         });
-    } else{
+      } else {
         res.status(404).send("LOT NOT FOUND");
+      }
+    }),
+    (err) => {
+      res.status(400).send(err.details[0].message);
     }
-  }), (err) => {
-    res.status(400).send(err.details[0].message);
-  });
+  );
 });
 
-router.put("/:id", (req,res) => {
-  Joi.validate(req.body, schemas.lot)
-  .then((data) => {
-    Lot.updateLot(req.params.id, data).then((info) => {
-      res.status(200).json(info);
-    })
-  }, (err) => {
-    res.status(400).send(err.details[0].message);
-  });
+router.put("/:id", (req, res) => {
+  Joi.validate(req.body, schemas.lot).then(
+    (data) => {
+      Lot.updateLot(req.params.id, data).then((info) => {
+        res.status(200).json(info);
+      });
+    },
+    (err) => {
+      res.status(400).send(err.details[0].message);
+    }
+  );
 });
 
 /*
@@ -88,4 +95,10 @@ router.get("/:id/status", (req, res) => {
   });
 });
 */
+Date.prototype.addDays = function (days) {
+  var date = new Date(this.valueOf());
+  date.setDate(date.getDate() + days);
+  return date;
+};
+
 module.exports = router;
