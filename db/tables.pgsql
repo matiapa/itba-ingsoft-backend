@@ -43,12 +43,6 @@ create table lot(
 );
 
 
-create table following(
-    follower_id text references users(id) not null,
-    followed_id text references users(id) not null,
-    primary key (follower_id,
-                followed_id)
-);
 
 create table auction(
 
@@ -64,6 +58,14 @@ create table auction_favorites(
     user_id text references users(id) not null,
     auc_id integer references auction(lot_id) not null,
     primary key (user_id,auc_id)
+);
+
+
+create table following(
+    follower_id text references users(id) not null,
+    followed_id text references users(id) not null,
+    primary key (follower_id,
+                followed_id)
 );
 
 create table user_rating(

@@ -4,7 +4,7 @@ const knex = require("../knex.js");
 
 module.exports = {
   createBid(info) {
-    return knex("bit").insert(info, "*");
+    return knex("bid").insert(info, "*");
   },
 
   deleteBid(auc_id) {
