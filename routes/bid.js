@@ -3,10 +3,31 @@ const router = express.Router();
 const Bid = require("../db/queries/bid.js");
 const auth = require("../firebase/authorization");
 
+const Joi = require("joi");
+const schemas = require("../db/schemas.js");
+
 router.use(auth.checkAuth);
 
-router.get("/:user_id", (req, res) => {
-  Bid.getBidByUserId(req.params.user_id).then((bid) => {
+router.get("/byAuction/:auc_id", (req, res) => {
+  Bid.getBidsByAuctionId(
+    req.params.auc_id,
+    req.query.offset,
+    req.query.limit
+  ).then((bid) => {
+    if (bid) {
+      res.status(200).json(bid);
+    } else {
+      res.status(404).send("BID NOT FOUND");
+    }
+  });
+});
+
+router.get("/byUser/:user_id", (req, res) => {
+  Bid.getBidByUserId(
+    req.params.user_id,
+    req.query.offset,
+    req.query.limit
+  ).then((bid) => {
     if (bid) {
       res.status(200).json(bid);
     } else {
@@ -36,9 +57,24 @@ router.post("/", (req, res) => {
     amount: req.body.amount,
     time: req.body.time, //nodejs server time iso8601
   };
-  Bid.createBid(bid).then(() => {
-    res.status(201).end();
-  });
+  //   Bid.createBid(bid).then(() => {
+  //     res.status(201).end();
+  //   });
+  Joi.validate(bid, schemas.bid).then(
+    (data) => {
+      Bid.createBid(data).then(
+        () => {
+          res.status(201).end();
+        },
+        (err) => {
+          res.status(400).send(err.details[0].message);
+        }
+      );
+    },
+    (err) => {
+      res.status(400).send(err.details[0].message);
+    }
+  );
 });
 /*
 router.put("/:ar_id", (req, res) => {

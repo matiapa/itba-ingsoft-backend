@@ -10,25 +10,16 @@ module.exports = {
   deleteBid(auc_id) {
     return knex("bid").where("auc_id", auc_id).del();
   },
-  getBidByUserId(user_id) {
-    return knex("bid").where("user_id", user_id);
+  getBidByUserId(user_id, offset, limit) {
+    return knex("bid").where("user_id", user_id).limit(limit).offset(offset);
   },
   getBidsByAuctionId(auc_id, offset, limit) {
     return knex()
-      .select(
-        "lot_id",
-        "creation_date",
-        "deadline",
-        "owner_id",
-        "name",
-        "category",
-        "description",
-        "state"
-      )
+      .select("user_id", "auc_id", "amount", "time")
       .from("bid")
       .innerJoin("auction", "bid.auc_id", "auction.lot_id")
       .where("auc_id", auc_id)
-      .orderBy(time, desc)
+      .orderBy("time", "desc")
       .limit(limit)
       .offset(offset);
   },

@@ -41,8 +41,9 @@ const lot_required = makeRequired(lot);
 // la id es serial en la base de datos
 const bid = {
   user_id: Joi.string().required(),
+  auc_id: Joi.string().required(),
   amount: Joi.number().required(),
-  time: Joi.date().timestamp().required(),
+  time: Joi.date().iso().required(),
 };
 
 const auction = {
