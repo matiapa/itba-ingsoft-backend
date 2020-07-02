@@ -124,4 +124,25 @@ module.exports = {
       .limit(limit)
       .offset(offset);
   },
+
+  getAuctionsWhereBiddingOn(user_id, offset = null, limit = null) {
+    return knex()
+      .select(
+        "lot_id",
+        "creation_date",
+        "deadline",
+        "owner_id",
+        "name",
+        "category",
+        "description",
+        "state"
+      )
+      .from("lot")
+      .innerJoin("auction", "lot.id", "auction.lot_id")
+      .innerJoin("bid", "bid.auc_id", "auction.lot_id")
+      .where("bid.user_id", user_id)
+      .orderBy("deadline", "asc")
+      .limit(limit)
+      .offset(offset);
+  },
 };

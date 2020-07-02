@@ -17,7 +17,7 @@ router.use(auth.checkAuth);
 //   });
 // });
 
-router.get("/list", (req, res) => {
+router.get("/bidder/:id", (req, res) => {
   Joi.validate(req.query, schemas.auction_list).then(
     (data) => {
       if (data.sort == "deadline") method = Auction.getAuctionsOrderByDeadline;
@@ -37,6 +37,48 @@ router.get("/list", (req, res) => {
           res.status(404).send("AUCTIONS NOT FOUND");
         }
       });
+    },
+    (err) => {
+      res.status(400).send(err.details[0].message);
+    }
+  );
+});
+
+router.get("/list", (req, res) => {
+  Joi.validate(req.query, schemas.auction_list).then(
+    (data) => {
+      if (data.user_id == null) {
+        if (data.sort == "deadline")
+          method = Auction.getAuctionsOrderByDeadline;
+        else if (data.sort == "popularity")
+          method = Auction.getAuctionsOrderByPopularity;
+        else if (data.sort == "latest")
+          method = Auction.getAuctionsOrderByCreationDate;
+        else {
+          res.status(400).end();
+          return;
+        }
+
+        method(data.category, data.offset, data.limit).then((auctions) => {
+          if (auctions) {
+            res.status(200).json(auctions);
+          } else {
+            res.status(404).send("AUCTIONS NOT FOUND");
+          }
+        });
+      } else {
+        Auction.getAuctionsWhereBiddingOn(
+          data.user_id,
+          data.offset,
+          data.limit
+        ).then((auctions) => {
+          if (auctions) {
+            res.status(200).json(auctions);
+          } else {
+            res.status(404).send("AUCTIONS NOT FOUND");
+          }
+        });
+      }
     },
     (err) => {
       res.status(400).send(err.details[0].message);

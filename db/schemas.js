@@ -42,6 +42,7 @@ const lot_required = makeRequired(lot);
 const bid = {
   user_id: Joi.string().required(),
   amount: Joi.number().required(),
+  time: Joi.date().timestamp().required(),
 };
 
 const auction = {
@@ -59,10 +60,11 @@ const expert = {
 };
 
 const auction_list = {
-  sort: Joi.string().valid("deadline", "popularity").required(),
+  sort: Joi.string().valid("deadline", "popularity", "latest").required(),
   offset: Joi.number().integer().min(0).required(),
   limit: Joi.number().integer().positive().required(),
   category: Joi.string(),
+  user_id: Joi.string(),
 };
 
 const expert_required = makeRequired(expert);
