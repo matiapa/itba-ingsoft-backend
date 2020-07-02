@@ -5,60 +5,60 @@ const auth = require("../firebase/authorization");
 const schemas = require("../db/schemas.js");
 const Joi = require("joi");
 
-
 router.use(auth.checkAuth);
 
 // router.post("/", (req, res) => {
 //   const auction = {
 //     category: req.body.category,
 //     name: req.body.name
-//   }; 
+//   };
 //   Auction.createAuction(auction).then(() => {
 //     res.status(201).end();
 //   });
 // });
 
 router.get("/list", (req, res) => {
-  Joi.validate(req.query, schemas.auction_list)
-  .then((data) => {
-    if(data.sort == "deadline")
-      method = Auction.getAuctionsOrderByDeadline;
-    else if(data.sort == "popularity")
-      method = Auction.getAuctionsOrderByPopularity;
-    else {
-      res.status(400).end();
-      return;
-    }
-
-    method(data.category, data.offset, data.limit)
-    .then((auctions) => {
-      if(auctions){
-        res.status(200).json(auctions);
-      }else{
-        res.status(404).send("AUCTIONS NOT FOUND");
+  Joi.validate(req.query, schemas.auction_list).then(
+    (data) => {
+      if (data.sort == "deadline") method = Auction.getAuctionsOrderByDeadline;
+      else if (data.sort == "popularity")
+        method = Auction.getAuctionsOrderByPopularity;
+      else if (data.sort == "latest")
+        method = Auction.getAuctionsOrderByCreationDate;
+      else {
+        res.status(400).end();
+        return;
       }
-    });
-  }, (err) => {
-    res.status(400).send(err.details[0].message);
-  });
-});
 
+      method(data.category, data.offset, data.limit).then((auctions) => {
+        if (auctions) {
+          res.status(200).json(auctions);
+        } else {
+          res.status(404).send("AUCTIONS NOT FOUND");
+        }
+      });
+    },
+    (err) => {
+      res.status(400).send(err.details[0].message);
+    }
+  );
+});
 
 router.get("/:id", (req, res) => {
   Auction.getAuctionById(req.params.id).then((auction) => {
-    if(auction){
+    if (auction) {
       res.status(200).json(auction);
-    }else{
+    } else {
       res.status(404).send("AUCTION NOT FOUND");
     }
   });
 });
 
-router.get("/byUser/:uid", (req, res) => {  
+router.get("/byUser/:uid", (req, res) => {
   Auction.getAuctionByOwnerId(req.params.uid).then((auction) => {
-    if(auction){
+    if (auction) {
       res.status(200).json(auction);
-    }else {
+    } else {
       res.status(404).send("AUCTION NOT FOUND");
     }
   });
@@ -85,6 +85,5 @@ router.put("/:id", (req, res) => {
   });
 });
 */
-
 
 module.exports = router;

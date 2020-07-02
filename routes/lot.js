@@ -44,22 +44,18 @@ router.get("/byUser/:uid", (req, res) => {
   });
 });
 
+router.get("/categories", (req, res) => {
+  Lot.getCategories().then((categories) => {
+    res.status(200).json(categories);
+  });
+});
+
 router.get("/:id", (req, res) => {
   Lot.getLotById(req.params.id).then((lot) => {
     if (lot) {
       res.status(200).json(lot);
     } else {
       res.status(404).send("LOT NOT FOUND");
-    }
-  });
-});
-
-router.get("/categories", (req, res) => {
-  Lot.getCategories().then((categories) => {
-    if (categories) {
-      res.status(200).json(categories);
-    } else {
-      res.status(404).send("CATEGORIES NOT FOUND");
     }
   });
 });
