@@ -1,5 +1,7 @@
+//require('dotenv').config();
+const serviceAccount = JSON.parse(process.env.FB_CREDENTIALS)
+
 const connection = require('./connection.json');
-const serviceAccount = require('./credentials.json');
 const admin = require('firebase-admin');
 const User = require("../db/queries/user");
 
