@@ -48,34 +48,6 @@ router.delete("/:ar_id", (req, res) => {
 });
 */
 
-router.use("/", auth.checkAuth);
-
-router.post("/", (req, res) => {
-  const bid = {
-    user_id: req.user.uid,
-    auc_id: req.body.auc_id,
-    amount: req.body.amount,
-    time: req.body.time, //nodejs server time iso8601
-  };
-  //   Bid.createBid(bid).then(() => {
-  //     res.status(201).end();
-  //   });
-  Joi.validate(bid, schemas.bid).then(
-    (data) => {
-      Bid.createBid(data).then(
-        () => {
-          res.status(201).end();
-        },
-        (err) => {
-          res.status(400).send(err.details[0].message);
-        }
-      );
-    },
-    (err) => {
-      res.status(400).send(err.details[0].message);
-    }
-  );
-});
 /*
 router.put("/:ar_id", (req, res) => {
     Bid.updateBid(req.params.ar_id, req.body).then((info) => {

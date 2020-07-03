@@ -3,7 +3,12 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
+<<<<<<< HEAD
     "start": "nodemon ./bin/www"
+=======
+    "start": "node ./bin/www",
+    "dev": "nodemon -r dotenv/config ./bin/www"
+>>>>>>> 18a2d1cfe44bdae45914f662f3363ba9838a6dc4
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

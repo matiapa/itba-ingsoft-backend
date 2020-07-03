@@ -12,8 +12,18 @@ module.exports = {
   },
   getUserById(id) {
     return knex("users")
-      .innerJoin("personal_info", "users.id", "personal_info.user_id")
+      .select(
+        "id",
+        "rol",
+        "name",
+        "last_name",
+        "email",
+        "country",
+        "province",
+        "location",
+      )
       .where("id", id)
+      .innerJoin("personal_info", "users.id", "personal_info.user_id")
       .first();
   },
   getUserByEmail(email) {

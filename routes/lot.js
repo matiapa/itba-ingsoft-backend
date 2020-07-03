@@ -5,8 +5,8 @@ const auth = require("../firebase/authorization");
 const schemas = require("../db/schemas.js");
 const Joi = require("joi");
 const Auction = require("../db/queries/auction.js");
-router.use(auth.checkAuth);
 
+router.post("/", auth.checkAuth);
 router.post("/", (req, res) => {
   Joi.validate(req.body, schemas.lot_required).then(
     (data) => {
@@ -60,6 +60,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
+router.delete("/:id", auth.checkAuth);
 router.delete("/:id", (req, res) => {
   Joi.validate(req.params, { id: Joi.number().integer() }).then(
     Lot.getLotById(req.params.id).then((lot) => {
@@ -77,6 +78,7 @@ router.delete("/:id", (req, res) => {
   );
 });
 
+router.put("/:id", auth.checkAuth);
 router.put("/:id", (req, res) => {
   Joi.validate(req.body, schemas.lot).then(
     (data) => {
