@@ -4,6 +4,7 @@ const Auction = require("../db/queries/auction.js");
 const auth = require("../firebase/authorization");
 const schemas = require("../db/schemas.js");
 const Joi = require("joi");
+const Bid = require("../db/queries/bid.js");
 
 // router.use(auth.checkAuth);
 
@@ -104,6 +105,32 @@ router.get("/byUser/:uid", (req, res) => {
       res.status(404).send("AUCTION NOT FOUND");
     }
   });
+});
+
+router.use("/:id/bid", auth.checkAuth);
+
+router.post("/:id/bid", (req, res) => {
+  const bid = {
+    user_id: req.user.uid,
+    auc_id: req.params.id,
+    amount: req.body.amount,
+    time: new Date(), //nodejs server time iso8601
+  };
+  Joi.validate(bid, schemas.bid).then(
+    (data) => {
+      Bid.createBid(data).then(
+      () => {
+        res.status(201).end();
+      },
+      (err) => {
+        res.status(400).send(err.detail);
+      }
+    );
+  },
+  (err) => {
+    res.status(400).send(err.details[0].message);
+  }
+  );
 });
 
 /*

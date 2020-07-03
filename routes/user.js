@@ -35,6 +35,11 @@ router.get("/:id", (req, res) => {
 });
 
 router.get("/:id/personal_info", (req, res) => {
+  if(req.user.uid != req.params.id)
+  {
+    res.status(403).send("INFORMATION PRIVATE");
+    return;
+  }
   User.getPersonalInfo(req.params.id).then((personal_info) => {
     if (personal_info) {
       res.status(200).json(personal_info);
