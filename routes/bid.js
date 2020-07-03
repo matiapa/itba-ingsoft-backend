@@ -6,8 +6,6 @@ const auth = require("../firebase/authorization");
 const Joi = require("joi");
 const schemas = require("../db/schemas.js");
 
-router.use(auth.checkAuth);
-
 router.get("/byAuction/:auc_id", (req, res) => {
   Bid.getBidsByAuctionId(
     req.params.auc_id,
@@ -49,6 +47,8 @@ router.delete("/:ar_id", (req, res) => {
     });
 });
 */
+
+router.use("/", auth.checkAuth);
 
 router.post("/", (req, res) => {
   const bid = {

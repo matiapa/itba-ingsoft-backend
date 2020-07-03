@@ -5,7 +5,7 @@ const auth = require("../firebase/authorization");
 const schemas = require("../db/schemas.js");
 const Joi = require("joi");
 
-router.use(auth.checkAuth);
+// router.use(auth.checkAuth);
 
 // router.post("/", (req, res) => {
 //   const auction = {
