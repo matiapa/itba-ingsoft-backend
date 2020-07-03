@@ -6,10 +6,8 @@ const Joi = require("joi");
 const auth = require("../firebase/authorization");
 
 function userInfoAuthorization(req, res, next) {
-  if(req.user.uid == req.params.id)
-    next();
-  else
-    res.sendStatus(403);
+  if (req.user.uid == req.params.id) next();
+  else res.sendStatus(403);
 }
 
 router.use(auth.checkAuth);
@@ -21,7 +19,7 @@ router.get("/", (req, res) => {
 });
 
 router.get("/id", (req, res) => {
-  res.status(200).json({uid: req.user.uid});
+  res.status(200).json({ uid: req.user.uid });
 });
 
 router.use("/:id", userInfoAuthorization);
