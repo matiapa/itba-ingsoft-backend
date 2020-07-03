@@ -81,4 +81,5 @@ module.exports = {
   expert,
   expert_required,
   auction_list,
+  bid,
 };
