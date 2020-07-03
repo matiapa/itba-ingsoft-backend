@@ -70,8 +70,8 @@ const auction_list = {
 };
 
 const following = {
-  follower: Joi.string.required(),
-  followed: Joi.string.required(),
+  follower: Joi.string().required(),
+  followed: Joi.string().required(),
 };
 
 const expert_required = makeRequired(expert);
