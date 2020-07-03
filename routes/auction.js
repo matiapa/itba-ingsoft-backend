@@ -17,69 +17,22 @@ const Joi = require("joi");
 //   });
 // });
 
-router.get("/bidder/:id", (req, res) => {
-  Joi.validate(req.query, schemas.auction_list).then(
-    (data) => {
-      if (data.sort == "deadline") method = Auction.getAuctionsOrderByDeadline;
-      else if (data.sort == "popularity")
-        method = Auction.getAuctionsOrderByPopularity;
-      else if (data.sort == "latest")
-        method = Auction.getAuctionsOrderByCreationDate;
-      else {
-        res.status(400).end();
-        return;
-      }
-
-      method(data.category, data.offset, data.limit).then((auctions) => {
-        if (auctions) {
-          res.status(200).json(auctions);
-        } else {
-          res.status(404).send("AUCTIONS NOT FOUND");
-        }
-      });
-    },
-    (err) => {
-      res.status(400).send(err.details[0].message);
-    }
-  );
-});
-
 router.get("/list", (req, res) => {
   Joi.validate(req.query, schemas.auction_list).then(
     (data) => {
-      if (data.user_id == null) {
-        if (data.sort == "deadline")
-          method = Auction.getAuctionsOrderByDeadline;
-        else if (data.sort == "popularity")
-          method = Auction.getAuctionsOrderByPopularity;
-        else if (data.sort == "latest")
-          method = Auction.getAuctionsOrderByCreationDate;
-        else {
-          res.status(400).end();
-          return;
+      var auctions = Auction.getAuctions();
+      if (auctions) {
+        auctions = Auction.sort(auctions, data.category, data.sort);
+        if (data.filter != null && data.filter == "bidding") {
+          auctions = Auction.filterBiddingOn(auctions, data.user.uid);
         }
-
-        method(data.category, data.offset, data.limit).then((auctions) => {
-          if (auctions) {
-            res.status(200).json(auctions);
-          } else {
-            res.status(404).send("AUCTIONS NOT FOUND");
-          }
-        });
+        auctions = auctions.limit(data.limit).offset(data.offset);
+        res.status(200).json(auctions);
       } else {
-        Auction.getAuctionsWhereBiddingOn(
-          data.user_id,
-          data.offset,
-          data.limit
-        ).then((auctions) => {
-          if (auctions) {
-            res.status(200).json(auctions);
-          } else {
-            res.status(404).send("AUCTIONS NOT FOUND");
-          }
-        });
+        res.status(404).send("AUCTIONS NOT FOUND");
       }
     },
+
     (err) => {
       res.status(400).send(err.details[0].message);
     }

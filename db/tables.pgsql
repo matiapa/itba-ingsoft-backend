@@ -73,7 +73,8 @@ create table user_rating(
     to_id text references users(id) not null,
     from_id text references users(id) not null,
     comment text not null,
-    rating decimal not null check(rating between 0 and 5)
+    rating decimal not null check(rating between 0 and 5),
+    post_date timestamp not null
 );
 
 
@@ -104,3 +105,4 @@ create table bid
     time    timestamp not null,
     primary key (id,user_id, auc_id, time)
 );
+

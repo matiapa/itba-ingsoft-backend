@@ -62,10 +62,16 @@ const expert = {
 
 const auction_list = {
   sort: Joi.string().valid("deadline", "popularity", "latest").required(),
+
   offset: Joi.number().integer().min(0).required(),
   limit: Joi.number().integer().positive().required(),
+  filter: Joi.string().valid("bidding"),
   category: Joi.string(),
-  user_id: Joi.string(),
+};
+
+const following = {
+  follower: Joi.string.required(),
+  followed: Joi.string.required(),
 };
 
 const expert_required = makeRequired(expert);
@@ -82,4 +88,5 @@ module.exports = {
   expert_required,
   auction_list,
   bid,
+  following,
 };

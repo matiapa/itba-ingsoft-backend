@@ -42,4 +42,17 @@ module.exports = {
   updatePersonalInfo(id, info) {
     return knex("personal_info").where("user_id", id).update(info, "*");
   },
+
+  getProfileRatings(user_id) {
+    return knex()
+      .select("to_id", "from_id", "comment", "rating")
+      .from("user_rating")
+      .where("to_id", user_id);
+  },
+
+  getFollowing(follower_id, followed_id) {
+    return knex("following")
+      .where("follower_id", follower_id)
+      .andWhere("followed_id", followed_id);
+  },
 };

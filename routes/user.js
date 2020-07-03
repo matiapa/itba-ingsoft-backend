@@ -78,4 +78,29 @@ router.put("/:id/personal_info", (req, res) => {
   }
 });
 
+router.get("/:id/rating", (req, res) => {
+  User.getProfileRatings(req.params.id).then((info) => {
+    res.status(200).json(info);
+  });
+});
+
+router.get("/following", (req, res) => {
+  Joi.validate(req.query, schemas.following).then(
+    (data) => {
+      var body;
+      User.getFollowing(data.follower_id, data.followed_id).then((info) => {
+        if (info.length > 0) {
+          body = { following: true };
+        } else {
+          body = { following: false };
+        }
+        res.status(200).json(body);
+      });
+    },
+    (err) => {
+      res.status(400).send(err.details[0].message);
+    }
+  );
+});
+
 module.exports = router;
