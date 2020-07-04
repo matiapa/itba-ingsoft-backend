@@ -20,7 +20,7 @@ module.exports = {
         "email",
         "country",
         "province",
-        "location",
+        "location"
       )
       .where("id", id)
       .innerJoin("personal_info", "users.id", "personal_info.user_id")
@@ -60,9 +60,28 @@ module.exports = {
       .where("to_id", user_id);
   },
 
+  postProfileRating(info) {
+    return knex("user_rating").insert(info, "*");
+  },
+
   getFollowing(follower_id, followed_id) {
     return knex("following")
       .where("follower_id", follower_id)
       .andWhere("followed_id", followed_id);
+  },
+  postFollowing(follower_id, followed_id) {
+    return knex("following").insert(
+      {
+        followed_id: followed_id,
+        follower_id: follower_id,
+      },
+      "*"
+    );
+  },
+  deleteFollowing(follower_id, followed_id) {
+    return knex("following")
+      .where("follower_id", follower_id)
+      .andWhere("followed_id", followed_id)
+      .del();
   },
 };

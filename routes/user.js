@@ -12,6 +12,62 @@ function userInfoAuthorization(req, res, next) {
 
 router.use(auth.checkAuth);
 
+//FOLLOWING
+router.get("/following", (req, res) => {
+  Joi.validate(req.query, schemas.following).then(
+    (data) => {
+      var body;
+      User.getFollowing(data.follower_id, data.followed_id).then((info) => {
+        if (info.length > 0) {
+          body = { following: true };
+        } else {
+          body = { following: false };
+        }
+        res.status(200).json(body);
+      });
+    },
+    (err) => {
+      res.status(400).send(err.details[0].message);
+    }
+  );
+});
+
+router.post("/following", (req, res) => {
+  Joi.validate(req.query, schemas.following).then(
+    (data) => {
+      User.postFollowing(data.follower_id, data.followed_id).then(
+        () => {
+          res.status(200).end();
+        },
+        (err) => {
+          res.status(400).send(err);
+        }
+      );
+    },
+    (err) => {
+      res.status(400).send(err.details[0].message);
+    }
+  );
+});
+
+router.delete("/following", (req, res) => {
+  Joi.validate(req.query, schemas.following).then(
+    (data) => {
+      User.deleteFollowing(data.follower_id, data.followed_id).then(
+        () => {
+          res.status(200).end();
+        },
+        (err) => {
+          res.status(400).send(err);
+        }
+      );
+    },
+    (err) => {
+      res.status(400).send(err.details[0].message);
+    }
+  );
+});
+
 router.get("/", (req, res) => {
   User.getAllUsers().then((users) => {
     res.status(200).json(users);
@@ -22,7 +78,7 @@ router.get("/id", (req, res) => {
   res.status(200).json({ uid: req.user.uid });
 });
 
-router.use("/:id", userInfoAuthorization);
+router.get("/:id", userInfoAuthorization);
 
 router.get("/:id", (req, res) => {
   User.getUserById(req.params.id).then((user) => {
@@ -35,8 +91,7 @@ router.get("/:id", (req, res) => {
 });
 
 router.get("/:id/personal_info", (req, res) => {
-  if(req.user.uid != req.params.id)
-  {
+  if (req.user.uid != req.params.id) {
     res.status(403).send("INFORMATION PRIVATE");
     return;
   }
@@ -83,29 +138,37 @@ router.put("/:id/personal_info", (req, res) => {
   }
 });
 
+//RATING
 router.get("/:id/rating", (req, res) => {
   User.getProfileRatings(req.params.id).then((info) => {
     res.status(200).json(info);
   });
 });
-
-router.get("/following", (req, res) => {
-  Joi.validate(req.query, schemas.following).then(
+router.post("/:id/rating", (req, res) => {
+  const user_rating = {
+    to_id: req.user.uid,
+    from_id: req.body.from_id,
+    comment: req.body.comment,
+    post_date: req.body.post_date,
+    rating: req.body.rating,
+  };
+  Joi.validate(user_rating, schemas.user_rating).then(
     (data) => {
-      var body;
-      User.getFollowing(data.follower_id, data.followed_id).then((info) => {
-        if (info.length > 0) {
-          body = { following: true };
-        } else {
-          body = { following: false };
-        }
-        res.status(200).json(body);
-      });
+      if (data) {
+        User.postProfileRating(data).then((info) => {
+          res.status(200).json(info);
+        });
+      }
     },
     (err) => {
       res.status(400).send(err.details[0].message);
     }
   );
+});
+router.delete("/:id/rating/:rating_id", (req, res) => {
+  User.getProfileRatings(req.params.id).then((info) => {
+    res.status(200).json(info);
+  });
 });
 
 module.exports = router;
