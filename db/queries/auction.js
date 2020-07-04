@@ -18,6 +18,8 @@ module.exports = {
         "name",
         "category",
         "description",
+        "initial_price",
+        "quantity",
         "state"
       )
       .from("lot")
@@ -36,6 +38,9 @@ module.exports = {
         "name",
         "category",
         "description",
+        "initial_price",
+        "quantity",
+
         "state"
       )
       .from("lot")
@@ -57,6 +62,8 @@ module.exports = {
         "name",
         "category",
         "description",
+        "initial_price",
+        "quantity",
         "state"
       )
       .from("lot")
@@ -76,6 +83,8 @@ module.exports = {
         "name",
         "category",
         "description",
+        "initial_price",
+        "quantity",
         "state"
       )
       .from("lot")
@@ -101,6 +110,8 @@ module.exports = {
         "name",
         "category",
         "description",
+        "initial_price",
+        "quantity",
         "state"
       )
       .from("lot")
@@ -114,6 +125,8 @@ module.exports = {
         "name",
         "category",
         "description",
+        "initial_price",
+        "quantity",
         "state"
       )
       .orderBy(knex.raw("count(*)"), "desc")
@@ -136,6 +149,8 @@ module.exports = {
         "name",
         "category",
         "description",
+        "initial_price",
+        "quantity",
         "state"
       )
       .from("lot")
