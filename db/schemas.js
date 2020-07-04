@@ -57,7 +57,7 @@ const auction = {
 const expert = {
   name: Joi.string(),
   last_name: Joi.string(),
-  speciality: Joi.string(),
+  category: Joi.string(),
 };
 
 const auction_list = {
@@ -83,6 +83,12 @@ const user_rating = {
   post_date: Joi.date().iso().required(),
   rating: Joi.number().min(0).max(5).required(),
 };
+
+const expert_asign = {
+  id_exp: Joi.string().required(),
+  id_auc: Joi.string().required(),
+};
+
 const expert_required = makeRequired(expert);
 
 module.exports = {
@@ -99,4 +105,5 @@ module.exports = {
   bid,
   following,
   user_rating,
+  expert_asign,
 };

@@ -29,7 +29,8 @@ create table expert(
     id serial primary key,
     name text,
     last_name text,
-    category  text
+    category  text,
+    
 
 );
 create table lot(
