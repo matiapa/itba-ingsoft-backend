@@ -61,10 +61,12 @@ const expert = {
 };
 
 const auction_list = {
-  sort: Joi.string().valid("deadline", "popularity", "latest").required(),
+  sort: Joi.string()
+    .valid("deadline", "popularity", "creation_date")
+    .required(),
 
-  offset: Joi.number().integer().min(0).required(),
-  limit: Joi.number().integer().positive().required(),
+  offset: Joi.number().integer().min(0),
+  limit: Joi.number().integer().positive(),
   filter: Joi.string().valid("bidding"),
   category: Joi.string(),
 };

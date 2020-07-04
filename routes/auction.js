@@ -17,20 +17,66 @@ const Bid = require("../db/queries/bid.js");
 //     res.status(201).end();
 //   });
 // });
+router.get("/bidding", auth.checkAuth);
+router.get("/bidding", (req, res) => {
+  Auction.getAuctionsBiddingOn(req.user.uid).then((data) => {
+    if (data) {
+      res.status(200).json(data);
+    } else {
+      res.status(404).send("AUCTION NOT FOUND");
+    }
+  });
+});
 
 router.get("/list", (req, res) => {
   Joi.validate(req.query, schemas.auction_list).then(
     (data) => {
-      var auctions = Auction.getAuctions();
-      if (auctions) {
-        auctions = Auction.sort(auctions, data.category, data.sort);
-        if (data.filter != null && data.filter == "bidding") {
-          auctions = Auction.filterBiddingOn(auctions, data.user.uid);
-        }
-        auctions = auctions.limit(data.limit).offset(data.offset);
-        res.status(200).json(auctions);
-      } else {
-        res.status(404).send("AUCTIONS NOT FOUND");
+      var sort = data.sort;
+      var result;
+      switch (sort) {
+        case "popularity":
+          Auction.getAuctionsOrderByPopularity(
+            data.category,
+            data.offset,
+            data.limit
+          ).then(
+            (auctions) => {
+              res.status(200).json(auctions);
+            },
+            (err) => {
+              res.status(404).send("AUCTION NOT FOUND");
+            }
+          );
+
+          break;
+        case "creation_date":
+          Auction.getAuctionsOrderByCreationDate(
+            data.category,
+            data.offset,
+            data.limit
+          ).then(
+            (auctions) => {
+              res.status(200).json(auctions);
+            },
+            (err) => {
+              res.status(404).send("AUCTION NOT FOUND");
+            }
+          );
+          break;
+        case "deadline":
+          Auction.getAuctionsOrderByDeadline(
+            data.category,
+            data.offset,
+            data.limit
+          ).then(
+            (auctions) => {
+              res.status(200).json(auctions);
+            },
+            (err) => {
+              res.status(404).send("AUCTION NOT FOUND");
+            }
+          );
+          break;
       }
     },
 
@@ -39,6 +85,43 @@ router.get("/list", (req, res) => {
     }
   );
 });
+// router.get("/list", (req, res) => {
+//   Joi.validate(req.query, schemas.auction_list).then(
+//     (data) => {
+//       Auction.getAuctions().then(
+//         (auctions) => {
+//           if (auctions) {
+//             Auction.sort(auctions, data.category, data.sort).then(
+//               (sorted) => {
+//                 if (data.filter != null && data.filter == "bidding") {
+//                   Auction.filterBiddingOn(sorted, data.user.uid).then(
+//                     (filtered) => {
+//                       res.status(200).json(filtered);
+//                     }
+//                   );
+//                 } else {
+//                   res.status(200).json(sorted);
+//                 }
+//               },
+//               (err) => {
+//                 res.status(400).send(err.details[0].message);
+//               }
+//             );
+//           } else {
+//             res.status(404).send("AUCTIONS NOT FOUND");
+//           }
+//         },
+//         (err) => {
+//           res.status(400).send(err.details[0].message);
+//         }
+//       );
+//     },
+
+//     (err) => {
+//       res.status(400).send(err.details[0].message);
+//     }
+//   );
+// });
 
 router.get("/:id", (req, res) => {
   Auction.getAuctionById(req.params.id).then((auction) => {
@@ -72,17 +155,17 @@ router.post("/:id/bid", (req, res) => {
   Joi.validate(bid, schemas.bid).then(
     (data) => {
       Bid.createBid(data).then(
-      () => {
-        res.status(201).end();
-      },
-      (err) => {
-        res.status(400).send(err.detail);
-      }
-    );
-  },
-  (err) => {
-    res.status(400).send(err.details[0].message);
-  }
+        () => {
+          res.status(201).end();
+        },
+        (err) => {
+          res.status(400).send(err.detail);
+        }
+      );
+    },
+    (err) => {
+      res.status(400).send(err.details[0].message);
+    }
   );
 });
 
