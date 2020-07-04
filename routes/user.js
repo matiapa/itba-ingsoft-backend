@@ -78,7 +78,7 @@ router.get("/id", (req, res) => {
   res.status(200).json({ uid: req.user.uid });
 });
 
-router.get("/:id", userInfoAuthorization);
+//router.get("/:id", userInfoAuthorization);
 
 router.get("/:id", (req, res) => {
   User.getUserById(req.params.id).then((user) => {
