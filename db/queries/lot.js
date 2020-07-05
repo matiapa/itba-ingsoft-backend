@@ -22,4 +22,8 @@ module.exports = {
   getCategories() {
     return knex("categories");
   },
+
+  postPhoto(info) {
+    return knex("lot_photos").insert(info, "*");
+  },
 };

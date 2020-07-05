@@ -35,9 +35,11 @@ const lot = {
   category: Joi.string(),
   initial_price: Joi.number().positive(),
   quantity: Joi.number().positive(),
+  lot_photos: Joi.array().items(Joi.number().integer()).required(),
 };
 
 const lot_required = makeRequired(lot);
+
 // la id es serial en la base de datos
 const bid = {
   user_id: Joi.string().required(),

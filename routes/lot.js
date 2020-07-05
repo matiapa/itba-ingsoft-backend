@@ -18,6 +18,7 @@ router.post("/", (req, res) => {
         category: data.category,
         initial_price: data.initial_price,
         quantity: data.quantity,
+        lot_photos: data.lot_photos,
       };
       Lot.createLot(lot).then((l) => {
         l = l[0];
@@ -28,6 +29,11 @@ router.post("/", (req, res) => {
         };
         Auction.createAuction(auction).then(() => {
           res.status(201).json({ id: l.id }).end();
+        });
+        lot.lot_photos.array.forEach((photo_id) => {
+          Lot.postPhoto({ lot_id: l.id, photo_id: photo_id }).then((info) => {
+            res.status(201).json(info).end();
+          });
         });
       });
     },
