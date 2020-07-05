@@ -154,9 +154,25 @@ router.post("/:id/bid", (req, res) => {
   };
   Joi.validate(bid, schemas.bid).then(
     (data) => {
-      Bid.createBid(data).then(
-        () => {
-          res.status(201).end();
+      Bid.getBidsByAuctionId(data.auc_id).then(
+        (bids) => {
+          if (bids.length > 0 && bids[0].user_id == bid.user_id) {
+            res.status(400).send("USER HAS ALREADY THE HIGHEST BID");
+          } else if (
+            bids.length == 0 ||
+            (bids.length > 0 && bids[0].amount < bid.amount)
+          ) {
+            Bid.createBid(bid).then(
+              () => {
+                res.status(201).end();
+              },
+              (err) => {
+                res.status(400).send(err.detail);
+              }
+            );
+          } else {
+            res.status(400).send("AMOUNT IS NOT HIGHER THAN HIGHEST BID");
+          }
         },
         (err) => {
           res.status(400).send(err.detail);

@@ -13,7 +13,7 @@ module.exports = {
   getBidByUserId(user_id, offset, limit) {
     return knex("bid").where("user_id", user_id).limit(limit).offset(offset);
   },
-  getBidsByAuctionId(auc_id, offset, limit) {
+  getBidsByAuctionId(auc_id, offset = null, limit = null) {
     return knex()
       .select("user_id", "auc_id", "amount", "time")
       .from("bid")
