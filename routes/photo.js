@@ -41,7 +41,7 @@ router.post("/", auth.checkAuth, upload.single("image"), (req, res) => {
           {
             Photo.deletePhoto(id);
             deleteTmp((e) => {
-              return handleError(e ?? err, res);
+              return handleError(e ? e : err, res);
             });
           }
           res.status(201).send({id: id});
@@ -49,7 +49,7 @@ router.post("/", auth.checkAuth, upload.single("image"), (req, res) => {
       }, (err) => {
         console.log(err);
         deleteTmp((e) => {
-          return handleError(e ?? err, res);
+          return handleError(e ? e : err, res);
         });
         res.status(400).send(err);
       });
