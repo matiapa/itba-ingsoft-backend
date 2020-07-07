@@ -14,6 +14,7 @@ var bid = require("./routes/bid");
 var expert = require("./routes/expert");
 var lot = require("./routes/lot");
 var mp_notifications = require("./routes/mp_notifications");
+var photo = require("./routes/photo");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -111,3 +112,4 @@ app.use("/bid", bid);
 app.use("/expert", expert);
 app.use("/lot", lot);
 app.use("/mp", mp_notifications);
+app.use("/photo", photo);

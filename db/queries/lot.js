@@ -24,6 +24,6 @@ module.exports = {
   },
 
   postPhoto(info) {
-    return knex("lot_photos").insert(info, "*");
+    return knex("lotphotos").insert(info, "*");
   },
 };

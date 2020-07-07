@@ -89,11 +89,14 @@ create table expert_asign(
 );
 
 
+create table photo(
+    id serial primary key
+);
 
 create table lotPhotos(
-    lot_id integer not null references lot(id),
-    url text unique,
-    primary key(lot_id,url)
+    lot_id integer not null references lot(id) on delete cascade,
+    photo_id integer not null references photo(id) on delete cascade,
+    primary key(lot_id,photo_id)
 );
 
 
