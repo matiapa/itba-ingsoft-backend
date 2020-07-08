@@ -6,7 +6,8 @@ const schemas = require("../db/schemas.js");
 const Joi = require("joi");
 const Auction = require("../db/queries/auction.js");
 
-router.post("/", auth.checkAuth);
+//Para testear porque log in esta roto
+//router.post("/", auth.checkAuth);
 router.post("/", (req, res) => {
   Joi.validate(req.body, schemas.lot_required).then(
     (data) => {
@@ -59,7 +60,25 @@ router.get("/categories", (req, res) => {
 router.get("/:id", (req, res) => {
   Lot.getLotById(req.params.id).then((lot) => {
     if (lot) {
-      res.status(200).json(lot);
+      Lot.getPhotos(req.params.id).then((photos) => {
+        if (photos) {
+          const info = {
+            id: lot.id,
+            owner_id: lot.owner_id,
+            name: lot.name,
+            description: lot.description,
+            state: lot.state,
+
+            category: lot.category,
+            initial_price: lot.initial_price,
+            quantity: lot.quantity,
+            photos_ids: photos,
+          };
+          res.status(200).json(lot);
+        } else {
+          res.status(404).send("LOT PHOTOS NOT FOUND");
+        }
+      });
     } else {
       res.status(404).send("LOT NOT FOUND");
     }

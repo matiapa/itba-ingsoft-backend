@@ -1,4 +1,5 @@
 const knex = require("../knex.js");
+const { select } = require("../knex.js");
 
 //tables
 
@@ -25,5 +26,9 @@ module.exports = {
 
   postPhoto(info) {
     return knex("lotphotos").insert(info, "*");
+  },
+
+  getPhotos(id) {
+    return knex().select("photo_id").from("lotphotos").where("id", id);
   },
 };
