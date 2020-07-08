@@ -21,8 +21,8 @@ const upload = multer({
 
 const photoDir = path.join(__dirname, "../uploads/");
 
-const deleteTmp = (callback) => {
-  fs.unlink(tempPath, (err) => {        
+const deleteTmp = (file, callback) => {
+  fs.unlink(file, (err) => {        
     callback(err);
   });
 };
@@ -40,7 +40,7 @@ router.post("/", auth.checkAuth, upload.single("image"), (req, res) => {
           if (err)
           {
             Photo.deletePhoto(id);
-            deleteTmp((e) => {
+            deleteTmp(tempPath, (e) => {
               return handleError(e ? e : err, res);
             });
           }
@@ -48,13 +48,13 @@ router.post("/", auth.checkAuth, upload.single("image"), (req, res) => {
         });
       }, (err) => {
         console.log(err);
-        deleteTmp((e) => {
+        deleteTmp(tempPath, (e) => {
           return handleError(e ? e : err, res);
         });
         res.status(400).send(err);
       });
     } else {
-      deleteTmp((e) => {
+      deleteTmp(tempPath, (e) => {
         if (e)
           return handleError(e, res);
         else
