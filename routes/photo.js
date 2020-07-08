@@ -31,9 +31,11 @@ router.get("/:id", express.static(path.join(__dirname, "../uploads/")));
 
 router.post("/", auth.checkAuth, upload.single("image"), (req, res) => {
     const tempPath = req.file.path;
-
+    if (!fs.existsSync(photoDir)){
+      fs.mkdirSync(photoDir);
+    }
     if (path.extname(req.file.originalname).toLowerCase() === ".jpg") {
-      Photo.addPhoto().then((id) => {
+      Photo.addPhoto(req.user.uid).then((id) => {
         id = id[0];        
         const targetPath = photoDir + id + ".jpg";
         mv(tempPath, targetPath, err => { 
@@ -45,7 +47,7 @@ router.post("/", auth.checkAuth, upload.single("image"), (req, res) => {
             });
           }
           else
-          res.status(201).send({id: id});
+            res.status(201).send({id: id});
         });
       }, (err) => {
         console.log(err);
@@ -67,13 +69,21 @@ router.post("/", auth.checkAuth, upload.single("image"), (req, res) => {
 router.delete("/:id", auth.checkAuth, (req, res) => {
   const id = req.params.id;
   const path = photoDir + id + ".jpg";
-  fs.unlink(path, (err) => {
-    if(err)
-      handleError(err, res);
-    else
-      Photo.deletePhoto(id).then(() => {
-        res.status(201).end();
+  Photo.searchPhoto(id).then((photo) => {
+    if(photo.owner_id == req.user.uid)
+      fs.unlink(path, (err) => {
+        if(err)
+          handleError(err, res);
+        else
+          Photo.deletePhoto(id).then(() => {
+            res.status(201).end();
+          });
       });
+    else
+      res.status(403).end();
+  }, (err) => {
+    console.log(err);
+    res.status(404).end();
   });
 });
 

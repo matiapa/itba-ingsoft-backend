@@ -90,7 +90,8 @@ create table expert_asign(
 
 
 create table photo(
-    id serial primary key
+    id serial primary key,
+    owner_id text not null references users(id) on delete cascade
 );
 
 create table lotPhotos(
