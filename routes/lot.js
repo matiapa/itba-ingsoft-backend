@@ -7,7 +7,7 @@ const Joi = require("joi");
 const Auction = require("../db/queries/auction.js");
 
 //Para testear porque log in esta roto
-//router.post("/", auth.checkAuth);
+router.post("/", auth.checkAuth);
 router.post("/", (req, res) => {
   Joi.validate(req.body, schemas.lot_required).then(
     (data) => {
@@ -68,13 +68,12 @@ router.get("/:id", (req, res) => {
             name: lot.name,
             description: lot.description,
             state: lot.state,
-
             category: lot.category,
             initial_price: lot.initial_price,
             quantity: lot.quantity,
             photos_ids: photos,
           };
-          res.status(200).json(lot);
+          res.status(200).json(info);
         } else {
           res.status(404).send("LOT PHOTOS NOT FOUND");
         }

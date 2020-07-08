@@ -29,6 +29,6 @@ module.exports = {
   },
 
   getPhotos(id) {
-    return knex().select("photo_id").from("lotphotos").where("id", id);
+    return knex().select("photo_id").from("lotphotos").where("lot_id", id);
   },
 };
