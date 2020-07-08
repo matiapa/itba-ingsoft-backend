@@ -33,6 +33,7 @@ router.get("/bidding", (req, res) => {
           if (photos) {
             const info = {
               owner_id: auction.owner_id,
+              lot_id: auction.lot_id,
               name: auction.name,
               description: auction.description,
               state: auction.state,
@@ -79,6 +80,7 @@ router.get("/list", (req, res) => {
                   if (photos) {
                     const info = {
                       owner_id: auction.owner_id,
+                      lot_id: auction.lot_id,
                       name: auction.name,
                       description: auction.description,
                       state: auction.state,
@@ -119,6 +121,7 @@ router.get("/list", (req, res) => {
                   if (photos) {
                     const info = {
                       owner_id: auction.owner_id,
+                      lot_id: auction.lot_id,
                       name: auction.name,
                       description: auction.description,
                       state: auction.state,
@@ -159,6 +162,7 @@ router.get("/list", (req, res) => {
                   if (photos) {
                     const info = {
                       owner_id: auction.owner_id,
+                      lot_id: auction.lot_id,
                       name: auction.name,
                       description: auction.description,
                       state: auction.state,
