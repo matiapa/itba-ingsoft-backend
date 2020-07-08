@@ -5,6 +5,7 @@ const auth = require("../firebase/authorization");
 const schemas = require("../db/schemas.js");
 const Joi = require("joi");
 const Bid = require("../db/queries/bid.js");
+const Lot = require("../db/queries/lot.js");
 
 // router.use(auth.checkAuth);
 
@@ -19,20 +20,50 @@ const Bid = require("../db/queries/bid.js");
 // });
 router.get("/bidding", auth.checkAuth);
 router.get("/bidding", (req, res) => {
-  Auction.getAuctionsBiddingOn(req.user.uid).then((data) => {
-    if (data) {
-      res.status(200).json(data);
-    } else {
+  Auction.getAuctionsBiddingOn(
+    req.user.uid,
+    req.query.offset,
+    req.query.limit
+  ).then(
+    async (auctions) => {
+      var result = await Promise.all(
+        auctions.map(async (auction) => {
+          var photos = await Lot.getPhotos(auction.lot_id);
+
+          if (photos) {
+            const info = {
+              owner_id: auction.owner_id,
+              name: auction.name,
+              description: auction.description,
+              state: auction.state,
+              category: auction.category,
+              initial_price: auction.initial_price,
+              quantity: auction.quantity,
+              creation_date: auction.creation_date,
+              deadline: auction.deadline,
+              photos_ids: photos,
+            };
+            console.log(info);
+            return info;
+          } else {
+            return auction;
+          }
+        })
+      );
+
+      res.status(200).json(result);
+    },
+    (err) => {
       res.status(404).send("AUCTION NOT FOUND");
     }
-  });
+  );
 });
 
 router.get("/list", (req, res) => {
   Joi.validate(req.query, schemas.auction_list).then(
     (data) => {
       var sort = data.sort;
-      var result;
+
       switch (sort) {
         case "popularity":
           Auction.getAuctionsOrderByPopularity(
@@ -40,8 +71,33 @@ router.get("/list", (req, res) => {
             data.offset,
             data.limit
           ).then(
-            (auctions) => {
-              res.status(200).json(auctions);
+            async (auctions) => {
+              var result = await Promise.all(
+                auctions.map(async (auction) => {
+                  var photos = await Lot.getPhotos(auction.lot_id);
+
+                  if (photos) {
+                    const info = {
+                      owner_id: auction.owner_id,
+                      name: auction.name,
+                      description: auction.description,
+                      state: auction.state,
+                      category: auction.category,
+                      initial_price: auction.initial_price,
+                      quantity: auction.quantity,
+                      creation_date: auction.creation_date,
+                      deadline: auction.deadline,
+                      photos_ids: photos,
+                    };
+                    console.log(info);
+                    return info;
+                  } else {
+                    return auction;
+                  }
+                })
+              );
+
+              res.status(200).json(result);
             },
             (err) => {
               res.status(404).send("AUCTION NOT FOUND");
@@ -55,9 +111,35 @@ router.get("/list", (req, res) => {
             data.offset,
             data.limit
           ).then(
-            (auctions) => {
-              res.status(200).json(auctions);
+            async (auctions) => {
+              var result = await Promise.all(
+                auctions.map(async (auction) => {
+                  var photos = await Lot.getPhotos(auction.lot_id);
+
+                  if (photos) {
+                    const info = {
+                      owner_id: auction.owner_id,
+                      name: auction.name,
+                      description: auction.description,
+                      state: auction.state,
+                      category: auction.category,
+                      initial_price: auction.initial_price,
+                      quantity: auction.quantity,
+                      creation_date: auction.creation_date,
+                      deadline: auction.deadline,
+                      photos_ids: photos,
+                    };
+                    console.log(info);
+                    return info;
+                  } else {
+                    return auction;
+                  }
+                })
+              );
+
+              res.status(200).json(result);
             },
+
             (err) => {
               res.status(404).send("AUCTION NOT FOUND");
             }
@@ -69,8 +151,33 @@ router.get("/list", (req, res) => {
             data.offset,
             data.limit
           ).then(
-            (auctions) => {
-              res.status(200).json(auctions);
+            async (auctions) => {
+              var result = await Promise.all(
+                auctions.map(async (auction) => {
+                  var photos = await Lot.getPhotos(auction.lot_id);
+
+                  if (photos) {
+                    const info = {
+                      owner_id: auction.owner_id,
+                      name: auction.name,
+                      description: auction.description,
+                      state: auction.state,
+                      category: auction.category,
+                      initial_price: auction.initial_price,
+                      quantity: auction.quantity,
+                      creation_date: auction.creation_date,
+                      deadline: auction.deadline,
+                      photos_ids: photos,
+                    };
+                    console.log(info);
+                    return info;
+                  } else {
+                    return auction;
+                  }
+                })
+              );
+
+              res.status(200).json(result);
             },
             (err) => {
               res.status(404).send("AUCTION NOT FOUND");
