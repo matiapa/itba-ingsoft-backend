@@ -29,7 +29,7 @@ router.get("/bidding", (req, res) => {
       var result = await Promise.all(
         auctions.map(async (auction) => {
           var photos = await Lot.getPhotos(auction.lot_id);
-
+          var photos_ids = photos.map((element) => element.photo_id);
           if (photos) {
             const info = {
               owner_id: auction.owner_id,
@@ -42,7 +42,7 @@ router.get("/bidding", (req, res) => {
               quantity: auction.quantity,
               creation_date: auction.creation_date,
               deadline: auction.deadline,
-              photos_ids: photos,
+              photos_ids: photos_ids,
             };
             console.log(info);
             return info;
@@ -76,7 +76,7 @@ router.get("/list", (req, res) => {
               var result = await Promise.all(
                 auctions.map(async (auction) => {
                   var photos = await Lot.getPhotos(auction.lot_id);
-
+                  var photos_ids = photos.map((element) => element.photo_id);
                   if (photos) {
                     const info = {
                       owner_id: auction.owner_id,
@@ -89,7 +89,7 @@ router.get("/list", (req, res) => {
                       quantity: auction.quantity,
                       creation_date: auction.creation_date,
                       deadline: auction.deadline,
-                      photos_ids: photos,
+                      photos_ids: photos_ids,
                     };
                     console.log(info);
                     return info;
@@ -117,7 +117,7 @@ router.get("/list", (req, res) => {
               var result = await Promise.all(
                 auctions.map(async (auction) => {
                   var photos = await Lot.getPhotos(auction.lot_id);
-
+                  var photos_ids = photos.map((element) => element.photo_id);
                   if (photos) {
                     const info = {
                       owner_id: auction.owner_id,
@@ -130,7 +130,7 @@ router.get("/list", (req, res) => {
                       quantity: auction.quantity,
                       creation_date: auction.creation_date,
                       deadline: auction.deadline,
-                      photos_ids: photos,
+                      photos_ids: photos_ids,
                     };
                     console.log(info);
                     return info;
@@ -160,6 +160,8 @@ router.get("/list", (req, res) => {
                   var photos = await Lot.getPhotos(auction.lot_id);
 
                   if (photos) {
+                    var photos_ids = photos.map((element) => element.photo_id);
+
                     const info = {
                       owner_id: auction.owner_id,
                       lot_id: auction.lot_id,
@@ -171,7 +173,7 @@ router.get("/list", (req, res) => {
                       quantity: auction.quantity,
                       creation_date: auction.creation_date,
                       deadline: auction.deadline,
-                      photos_ids: photos,
+                      photos_ids: photos_ids,
                     };
                     console.log(info);
                     return info;
@@ -235,23 +237,79 @@ router.get("/list", (req, res) => {
 // });
 
 router.get("/:id", (req, res) => {
-  Auction.getAuctionById(req.params.id).then((auction) => {
-    if (auction) {
-      res.status(200).json(auction);
-    } else {
+  Auction.getAuctionById(req.params.id).then(
+    async (auctions) => {
+      var result = await Promise.all(
+        auctions.map(async (auction) => {
+          var photos = await Lot.getPhotos(auction.lot_id);
+          var photos_ids = photos.map((element) => element.photo_id);
+          if (photos) {
+            const info = {
+              owner_id: auction.owner_id,
+              lot_id: auction.lot_id,
+              name: auction.name,
+              description: auction.description,
+              state: auction.state,
+              category: auction.category,
+              initial_price: auction.initial_price,
+              quantity: auction.quantity,
+              creation_date: auction.creation_date,
+              deadline: auction.deadline,
+              photos_ids: photos_ids,
+            };
+            console.log(info);
+            return info;
+          } else {
+            return auction;
+          }
+        })
+      );
+
+      res.status(200).json(result);
+    },
+
+    (err) => {
       res.status(404).send("AUCTION NOT FOUND");
     }
-  });
+  );
 });
 
 router.get("/byUser/:uid", (req, res) => {
-  Auction.getAuctionByOwnerId(req.params.uid).then((auction) => {
-    if (auction) {
-      res.status(200).json(auction);
-    } else {
+  Auction.getAuctionByOwnerId(req.params.uid).then(
+    async (auctions) => {
+      var result = await Promise.all(
+        auctions.map(async (auction) => {
+          var photos = await Lot.getPhotos(auction.lot_id);
+          var photos_ids = photos.map((element) => element.photo_id);
+          if (photos) {
+            const info = {
+              owner_id: auction.owner_id,
+              lot_id: auction.lot_id,
+              name: auction.name,
+              description: auction.description,
+              state: auction.state,
+              category: auction.category,
+              initial_price: auction.initial_price,
+              quantity: auction.quantity,
+              creation_date: auction.creation_date,
+              deadline: auction.deadline,
+              photos_ids: photos_ids,
+            };
+            console.log(info);
+            return info;
+          } else {
+            return auction;
+          }
+        })
+      );
+
+      res.status(200).json(result);
+    },
+
+    (err) => {
       res.status(404).send("AUCTION NOT FOUND");
     }
-  });
+  );
 });
 
 router.use("/:id/bid", auth.checkAuth);
