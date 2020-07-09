@@ -82,7 +82,7 @@ const user_rating = {
   to_id: Joi.string().required(),
   from_id: Joi.string().required(),
   comment: Joi.string().required(),
-  post_date: Joi.date().iso().required(),
+  date: Joi.date().iso().required(),
   rating: Joi.number().min(0).max(5).required(),
 };
 
