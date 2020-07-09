@@ -55,7 +55,7 @@ module.exports = {
 
   getProfileRatings(user_id) {
     return knex()
-      .select("to_id", "from_id", "comment", "rating")
+      .select("to_id", "from_id", "comment", "rating", "date")
       .from("user_rating")
       .where("to_id", user_id);
   },

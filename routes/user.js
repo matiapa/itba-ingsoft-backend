@@ -147,9 +147,9 @@ router.get("/:id/rating", (req, res) => {
 router.post("/:id/rating", (req, res) => {
   const user_rating = {
     to_id: req.user.uid,
-    from_id: req.body.from_id,
+    from_id: req.user.uid,
     comment: req.body.comment,
-    post_date: req.body.post_date,
+    date: new Date(),
     rating: req.body.rating,
   };
   Joi.validate(user_rating, schemas.user_rating).then(
