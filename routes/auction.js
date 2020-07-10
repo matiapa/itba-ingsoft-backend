@@ -325,15 +325,18 @@ router.post("/:id/bid", (req, res) => {
     (data) => {
       Bid.getBidsByAuctionId(data.auc_id).then(
         (bids) => {
-          if (bids.length > 0 && bids[0].user_id == bid.user_id) {
-            res.status(400).send("USER HAS ALREADY THE HIGHEST BID");
-          } else if (
+          // if (bids.length > 0 && bids[0].user_id == bid.user_id) {
+          //   res.status(400).send("USER HAS ALREADY THE HIGHEST BID");
+          // } else 
+          if (
             bids.length == 0 ||
             (bids.length > 0 && bids[0].amount < bid.amount)
           ) {
             Bid.createBid(bid).then(
-              () => {
+              (bid) => {
+                bid = bid[0];
                 res.status(201).end();
+                io.to(bid.auc_id).emit('bidPublished', bid);
               },
               (err) => {
                 res.status(400).send(err.detail);
@@ -376,4 +379,23 @@ router.put("/:id", (req, res) => {
 });
 */
 
-module.exports = router;
+router.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+})
+
+var io;
+
+module.exports = function(server){
+  io = require('socket.io')(server).of('/auction');
+  io.on('connection', (socket) => {
+    console.log('a user connected');
+    socket.on('disconnect', () => {
+      console.log('user disconnected');
+    });
+    socket.on('subscribe', function(msg){
+      socket.join(msg);
+      console.log(msg);
+    });
+  });
+  return router;
+};

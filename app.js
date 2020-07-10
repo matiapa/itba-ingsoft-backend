@@ -7,6 +7,7 @@ var schemas = require("./db/schemas.js");
 const Joi = require("joi");
 var User = require("./db/queries/user.js");
 var app = express();
+var http = require('http');
 
 var user = require("./routes/user");
 var auction = require("./routes/auction");
@@ -106,8 +107,11 @@ app.post("/register", (req, res) => {
   }
 });
 
+var server = http.createServer(app);
+app.set('server', server);
+
 app.use("/user", user);
-app.use("/auction", auction);
+app.use("/auction", auction(server));
 app.use("/bid", bid);
 app.use("/expert", expert);
 app.use("/lot", lot);
