@@ -91,6 +91,15 @@ const expert_asign = {
   id_auc: Joi.string().required(),
 };
 
+const message_list = {
+  offset: Joi.number().integer().min(0),
+  limit: Joi.number().integer().positive(),
+};
+
+const message = {
+  msg: Joi.string().required()
+};
+
 const expert_required = makeRequired(expert);
 
 module.exports = {
@@ -108,4 +117,6 @@ module.exports = {
   following,
   user_rating,
   expert_asign,
+  message_list,
+  message,
 };

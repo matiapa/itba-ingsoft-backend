@@ -31,6 +31,21 @@ function createSession(req, res) {
     });
 }
 
+function checkSession(session)
+{
+    return admin.auth().verifySessionCookie(session, true);
+}
+
+async function checkSocket(socket, next) {
+    claims = await checkSession(socket.request.headers.cookie);
+    if(claims) {
+        socket.user = claims;
+        next();
+    }
+    else
+        next(new Error('Forbidden'));
+}
+
 function checkAuth(req, res, next) {
     const sessionCookie = req.cookies.session || '';
 
@@ -51,4 +66,4 @@ function closeSession(req, res) {
     admin.auth().revokeRefreshTokens(req.uid);
 }
 
-module.exports = { checkAuth, createSession, closeSession };
+module.exports = { checkAuth, createSession, closeSession, checkSocket };

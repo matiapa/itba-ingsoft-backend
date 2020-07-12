@@ -111,3 +111,11 @@ create table bid
     primary key (id,user_id, auc_id, time)
 );
 
+create table chat
+(
+    id serial primary key,
+    from_id text not null references users(id) on delete cascade,
+    to_id text not null references users(id) on delete cascade,
+    date timestamp not null,
+    msg text not null
+);
