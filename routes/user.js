@@ -10,8 +10,6 @@ function userInfoAuthorization(req, res, next) {
   else res.sendStatus(403);
 }
 
-router.use(auth.checkAuth);
-
 //FOLLOWING
 router.get("/following", (req, res) => {
   Joi.validate(req.query, schemas.following).then(
@@ -74,7 +72,7 @@ router.get("/", (req, res) => {
   });
 });
 
-router.get("/id", (req, res) => {
+router.get("/id", auth.checkAuth, (req, res) => {
   res.status(200).json({ uid: req.user.uid });
 });
 
@@ -90,11 +88,7 @@ router.get("/:id", (req, res) => {
   });
 });
 
-router.get("/:id/personal_info", (req, res) => {
-  if (req.user.uid != req.params.id) {
-    res.status(403).send("INFORMATION PRIVATE");
-    return;
-  }
+router.get("/:id/personal_info", auth.checkAuth, userInfoAuthorization, (req, res) => {
   User.getPersonalInfo(req.params.id).then((personal_info) => {
     if (personal_info) {
       res.status(200).json(personal_info);
@@ -104,7 +98,7 @@ router.get("/:id/personal_info", (req, res) => {
   });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", auth.checkAuth, userInfoAuthorization, (req, res) => {
   User.getUserById(req.params.id).then((user) => {
     if (user) {
       User.deleteUser(req.params.id).then(() => {
@@ -116,7 +110,7 @@ router.delete("/:id", (req, res) => {
   });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", auth.checkAuth, userInfoAuthorization, (req, res) => {
   const result = Joi.validate(req.body, schemas.user);
   if (result.error) {
     return res.status(400).send(result.error.details[0].message);
@@ -127,7 +121,7 @@ router.put("/:id", (req, res) => {
   }
 });
 
-router.put("/:id/personal_info", (req, res) => {
+router.put("/:id/personal_info", auth.checkAuth, userInfoAuthorization, (req, res) => {
   const result = Joi.validate(req.body, schemas.personal_info);
   if (result.error) {
     return res.status(400).send(result.error.details[0].message);
@@ -144,9 +138,9 @@ router.get("/:id/rating", (req, res) => {
     res.status(200).json(info);
   });
 });
-router.post("/:id/rating", (req, res) => {
+router.post("/:id/rating", auth.checkAuth, (req, res) => {
   const user_rating = {
-    to_id: req.user.uid,
+    to_id: req.params.id,
     from_id: req.user.uid,
     comment: req.body.comment,
     date: new Date(),
@@ -165,10 +159,10 @@ router.post("/:id/rating", (req, res) => {
     }
   );
 });
-router.delete("/:id/rating/:rating_id", (req, res) => {
-  User.getProfileRatings(req.params.id).then((info) => {
-    res.status(200).json(info);
-  });
-});
+// router.delete("/:id/rating/:rating_id", (req, res) => {
+//   User.getProfileRatings(req.params.id).then((info) => {
+//     res.status(200).json(info);
+//   });
+// });
 
 module.exports = router;
