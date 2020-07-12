@@ -5,9 +5,9 @@ const router = express.Router();
 const schemas = require("../db/schemas.js");
 const Joi = require("joi");
 
-router.get("/messages", auth.checkAuth, (req, res) => {
+router.get("/:id", auth.checkAuth, (req, res) => {
     Joi.validate(req.query, schemas.message_list).then(async (data) => {
-        result = await Chat.getMessages(req.user.uid, data.offset, data.limit);
+        result = await Chat.getMessages(req.user.uid, req.params.id, data.offset, data.limit);
         res.status(200).send(result);
     }, (err) => {
         res.status(400).send(err.details[0].message);

@@ -4,11 +4,13 @@ module.exports = {
     addMessage(msg) {
         return knex("chat").insert(msg, "*");
     },
-    getMessages(user_id, offset, limit) {
+    getMessages(user_id, chat_id, offset, limit) {
         return knex("chat")
         .select("*")
-        .where("chat.from_id", user_id)
-        .orWhere("to_id", user_id)
+        .where("from_id", user_id)
+        .andWhere("to_id", chat_id)
+        .orWhere("from_id", chat_id)
+        .andWhere("to_id", user_id)
         .orderBy("date", "desc")
         .limit(limit)
         .offset(offset);
