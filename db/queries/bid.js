@@ -19,7 +19,7 @@ module.exports = {
       .from("bid")
       .innerJoin("auction", "bid.auc_id", "auction.lot_id")
       .where("auc_id", auc_id)
-      .orderBy("time", "desc")
+      .orderBy("amount", "desc")
       .limit(limit)
       .offset(offset);
   },

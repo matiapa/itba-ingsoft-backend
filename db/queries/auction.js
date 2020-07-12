@@ -48,7 +48,8 @@ module.exports = {
       .where("bid.user_id", user_id)
       .orderBy("deadline", "asc")
       .limit(limit)
-      .offset(offset);
+      .offset(offset)
+      .distinct();
   },
 
   //auction por owner_id
