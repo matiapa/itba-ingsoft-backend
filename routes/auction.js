@@ -388,13 +388,12 @@ var io;
 module.exports = function (server) {
   io = require("socket.io")(server).of("/auction");
   io.on("connection", (socket) => {
-    console.log("a user connected");
     socket.on("disconnect", () => {
-      console.log("user disconnected");
+      // console.log("user disconnected");
     });
     socket.on("subscribe", function (msg) {
       socket.join(msg);
-      console.log(msg);
+      // console.log(msg);
     });
   });
   return router;
