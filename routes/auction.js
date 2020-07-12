@@ -44,7 +44,6 @@ router.get("/bidding", (req, res) => {
               deadline: auction.deadline,
               photos_ids: photos_ids,
             };
-            console.log(info);
             return info;
           } else {
             return auction;
@@ -91,7 +90,6 @@ router.get("/list", (req, res) => {
                       deadline: auction.deadline,
                       photos_ids: photos_ids,
                     };
-                    console.log(info);
                     return info;
                   } else {
                     return auction;
@@ -132,7 +130,6 @@ router.get("/list", (req, res) => {
                       deadline: auction.deadline,
                       photos_ids: photos_ids,
                     };
-                    console.log(info);
                     return info;
                   } else {
                     return auction;
@@ -175,7 +172,6 @@ router.get("/list", (req, res) => {
                       deadline: auction.deadline,
                       photos_ids: photos_ids,
                     };
-                    console.log(info);
                     return info;
                   } else {
                     return auction;
@@ -257,7 +253,6 @@ router.get("/:id", (req, res) => {
               deadline: auction.deadline,
               photos_ids: photos_ids,
             };
-            console.log(info);
             return info;
           } else {
             return auction;
@@ -295,7 +290,6 @@ router.get("/byUser/:uid", (req, res) => {
               deadline: auction.deadline,
               photos_ids: photos_ids,
             };
-            console.log(info);
             return info;
           } else {
             return auction;

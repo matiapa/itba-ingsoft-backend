@@ -31,7 +31,7 @@ router.post("/", (req, res) => {
           res.status(201).json({ id: l.id }).end();
         });
         data.lot_photos.forEach((photo_id) => {
-          console.log(photo_id);
+          // console.log(photo_id);
           Lot.postPhoto({ lot_id: l.id, photo_id: photo_id }).then((info) => {
             res.status(201).json(info).end();
           });
