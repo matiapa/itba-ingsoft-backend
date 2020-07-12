@@ -327,7 +327,7 @@ router.post("/:id/bid", (req, res) => {
         (bids) => {
           // if (bids.length > 0 && bids[0].user_id == bid.user_id) {
           //   res.status(400).send("USER HAS ALREADY THE HIGHEST BID");
-          // } else 
+          // } else
           if (
             bids.length == 0 ||
             (bids.length > 0 && bids[0].amount < bid.amount)
@@ -336,7 +336,7 @@ router.post("/:id/bid", (req, res) => {
               (bid) => {
                 bid = bid[0];
                 res.status(201).end();
-                io.to(bid.auc_id).emit('bidPublished', bid);
+                io.to(bid.auc_id).emit("bidPublished", bid.amount);
               },
               (err) => {
                 res.status(400).send(err.detail);
@@ -379,20 +379,20 @@ router.put("/:id", (req, res) => {
 });
 */
 
-router.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-})
+router.get("/", (req, res) => {
+  res.sendFile(__dirname + "/index.html");
+});
 
 var io;
 
-module.exports = function(server){
-  io = require('socket.io')(server).of('/auction');
-  io.on('connection', (socket) => {
-    console.log('a user connected');
-    socket.on('disconnect', () => {
-      console.log('user disconnected');
+module.exports = function (server) {
+  io = require("socket.io")(server).of("/auction");
+  io.on("connection", (socket) => {
+    console.log("a user connected");
+    socket.on("disconnect", () => {
+      console.log("user disconnected");
     });
-    socket.on('subscribe', function(msg){
+    socket.on("subscribe", function (msg) {
       socket.join(msg);
       console.log(msg);
     });
