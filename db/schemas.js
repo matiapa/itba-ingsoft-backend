@@ -74,7 +74,6 @@ const auction_list = {
 };
 
 const following = {
-  follower_id: Joi.string().required(),
   followed_id: Joi.string().required(),
 };
 
