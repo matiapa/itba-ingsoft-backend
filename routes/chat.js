@@ -36,7 +36,7 @@ router.post("/:id", auth.checkAuth, (req, res) => {
 })
 
 module.exports = function(server) {
-    const io = require("socket.io")(server).of("/chat");
+    const io = server.of("/chat");
     io.use(auth.checkSocket);
     io.on("connection", (socket) => {
         console.log("a user connected");

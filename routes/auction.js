@@ -386,7 +386,7 @@ router.get("/", (req, res) => {
 var io;
 
 module.exports = function (server) {
-  io = require("socket.io")(server).of("/auction");
+  io = server.of("/auction");
   io.on("connection", (socket) => {
     socket.on("disconnect", () => {
       // console.log("user disconnected");
