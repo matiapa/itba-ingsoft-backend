@@ -336,7 +336,7 @@ router.post("/:id/bid", (req, res) => {
               (bid) => {
                 bid = bid[0];
                 res.status(201).end();
-                io.to(bid.auc_id).emit("bidPublished", bid.amount);
+                io.to(bid.auc_id).emit("bidPublished", bid);
               },
               (err) => {
                 res.status(400).send(err.detail);
