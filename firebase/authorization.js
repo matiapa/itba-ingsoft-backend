@@ -38,7 +38,7 @@ function checkSession(session)
 
 async function checkSocket(socket, next) {
     console.log(socket.handshake);
-    claims = await checkSession(socket.handshake.headers['Cookie']);
+    claims = await checkSession(socket.handshake.query.cookie);
     if(claims) {
         socket.user = claims;
         next();
