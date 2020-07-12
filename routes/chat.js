@@ -24,6 +24,7 @@ router.post("/:id", auth.checkAuth, (req, res) => {
         }
         result = Chat.addMessage(entry).then(
             (msg) => {
+                io.to(entry.to_id).send(entry.msg);
                 res.status(201).end();
             }
             , (err) => {
@@ -35,6 +36,7 @@ router.post("/:id", auth.checkAuth, (req, res) => {
     });
 })
 
+var io;
 module.exports = function(server) {
     const io = server.of("/chat");
     io.use(auth.checkSocket);
@@ -44,9 +46,10 @@ module.exports = function(server) {
         socket.on("disconnect", () => {
             console.log("user disconnected");
         });
-        socket.on("chat message", (to, msg) => {
+        socket.on("chat message", async (to, msg) => {
+            console.log(`Message "${msg}" sent to "${to}"`);
             socket.to(to).send(msg);
-            Chat.addMessage({
+            await Chat.addMessage({
                 from_id: socket.user.uid,
                 to_id: to,
                 date: new Date(),
