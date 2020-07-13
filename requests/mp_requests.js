@@ -6,7 +6,7 @@ const access_token =
 const port = 3000;
 
 const options = {
-  hostname: "https://api.mercadopago.com",
+  hostname: "api.mercadopago.com",
   port: port,
   path: "/checkout/preferences?access_token=" + access_token,
   method: "POST",
