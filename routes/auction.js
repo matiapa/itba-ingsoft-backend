@@ -427,7 +427,7 @@ module.exports = {
     auctionData = {
       lot_id: id,
       creation_date: new Date(),
-      deadline: new Date().addMinutes(5),
+      deadline: new Date().addMinutes(1),
     };
     await Auction.createAuction(auctionData);
 
