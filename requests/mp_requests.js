@@ -1,4 +1,5 @@
 const https = require("https");
+const { request } = require("http");
 
 const access_token =
   "TEST-2172260712360317-070421-ddef0a4c0adf8c987aa7cb19bf73bf49-293458878";
@@ -14,27 +15,30 @@ const options = {
     "Content-Type": "application/json",
   },
 };
-
-const get_preference_id = https.request(options, (res) => {
-  if (res.statusCode == 201) {
-    let data = "";
-    res.on("data", (chunk) => {
-      data += chunk.toString("utf8");
-    });
-    res.on("end", () => {
-      console.log(JSON.parse(data));
-      //TODO mandar evento de cerrado
-    });
-  } else {
-    console.log("Mercado Pago API Error:");
-  }
-});
-get_preference_id.on("error", (error) => {
-  console.error(error);
-});
+function get_preference_id(data, callback) {
+  request = https.request(options, (res) => {
+    if (res.statusCode == 201) {
+      let data = "";
+      res.on("data", (chunk) => {
+        data += chunk.toString("utf8");
+      });
+      res.on("end", () => {
+        resData = JSON.parse(data);
+        callback(resData.id);
+      });
+    } else {
+      console.log("Mercado Pago API Error:");
+    }
+  });
+  request.on("error", (error) => {
+    console.error(error);
+  });
+  request.write(data);
+  request.end();
+}
 
 module.exports = {
-  createPreference(auction, highestBid, payer_info) {
+  createPreference(auction, highestBid, payer_info, callback) {
     const data = JSON.stringify({
       items: [
         {
@@ -63,7 +67,6 @@ module.exports = {
         ],
       },
     });
-    get_preference_id.write(data);
-    get_preference_id.end();
+    get_preference_id(data, callback);
   },
 };
