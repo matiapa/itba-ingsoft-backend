@@ -16,6 +16,7 @@ var expert = require("./routes/expert");
 var lot = require("./routes/lot");
 var mp_notifications = require("./routes/mp_notifications");
 var photo = require("./routes/photo");
+var chat = require("./routes/chat");
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -109,11 +110,13 @@ app.post("/register", (req, res) => {
 
 var server = http.createServer(app);
 app.set('server', server);
+io = require("socket.io")(server);
 
 app.use("/user", user);
-app.use("/auction", auction(server));
+app.use("/auction", auction(io));
 app.use("/bid", bid);
 app.use("/expert", expert);
 app.use("/lot", lot);
 app.use("/mp", mp_notifications);
 app.use("/photo", photo);
+app.use("/chat", chat(io));

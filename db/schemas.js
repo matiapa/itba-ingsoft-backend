@@ -74,7 +74,6 @@ const auction_list = {
 };
 
 const following = {
-  follower_id: Joi.string().required(),
   followed_id: Joi.string().required(),
 };
 
@@ -89,6 +88,15 @@ const user_rating = {
 const expert_asign = {
   id_exp: Joi.string().required(),
   id_auc: Joi.string().required(),
+};
+
+const message_list = {
+  offset: Joi.number().integer().min(0),
+  limit: Joi.number().integer().positive(),
+};
+
+const message = {
+  msg: Joi.string().required()
 };
 
 const expert_required = makeRequired(expert);
@@ -108,4 +116,6 @@ module.exports = {
   following,
   user_rating,
   expert_asign,
+  message_list,
+  message,
 };

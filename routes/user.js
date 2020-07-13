@@ -11,11 +11,11 @@ function userInfoAuthorization(req, res, next) {
 }
 
 //FOLLOWING
-router.get("/following", (req, res) => {
+router.get("/following", auth.checkAuth, (req, res) => {
   Joi.validate(req.query, schemas.following).then(
     (data) => {
       var body;
-      User.getFollowing(data.follower_id, data.followed_id).then((info) => {
+      User.getFollowing(req.user.uid, data.followed_id).then((info) => {
         if (info.length > 0) {
           body = { following: true };
         } else {
@@ -30,10 +30,10 @@ router.get("/following", (req, res) => {
   );
 });
 
-router.post("/following", (req, res) => {
+router.post("/following", auth.checkAuth, (req, res) => {
   Joi.validate(req.query, schemas.following).then(
     (data) => {
-      User.postFollowing(data.follower_id, data.followed_id).then(
+      User.postFollowing(req.user.uid, data.followed_id).then(
         () => {
           res.status(200).end();
         },
@@ -48,10 +48,10 @@ router.post("/following", (req, res) => {
   );
 });
 
-router.delete("/following", (req, res) => {
+router.delete("/following", auth.checkAuth, (req, res) => {
   Joi.validate(req.query, schemas.following).then(
     (data) => {
-      User.deleteFollowing(data.follower_id, data.followed_id).then(
+      User.deleteFollowing(req.user.uid, data.followed_id).then(
         () => {
           res.status(200).end();
         },
