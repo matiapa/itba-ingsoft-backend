@@ -45,7 +45,8 @@ module.exports = {
     )
     .from("lot")
     .innerJoin("auction", "lot.id", "auction.lot_id")
-    .where("lot.id", id);
+    .where("lot.id", id)
+    .first();
   },
 
   getAuctionsBiddingOn(user_id, offset = null, limit = null) {

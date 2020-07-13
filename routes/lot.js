@@ -120,16 +120,6 @@ router.get("/:id/status", (req, res) => {
   });
 });
 */
-Date.prototype.addDays = function (days) {
-  var date = new Date(this.valueOf());
-  date.setDate(date.getDate() + days);
-  return date;
-};
 
-Date.prototype.addMinutes = function (mins) {
-  var date = new Date(this.valueOf());
-  date.setMinutes(date.getMinutes() + mins);
-  return date;
-};
 
 module.exports = router;

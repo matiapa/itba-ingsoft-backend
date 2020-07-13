@@ -3,11 +3,11 @@ const https = require("https");
 const access_token =
   "TEST-2172260712360317-070421-ddef0a4c0adf8c987aa7cb19bf73bf49-293458878";
 
-const port = 3000;
+//const port = 3000;
 
 const options = {
   hostname: "api.mercadopago.com",
-  port: port,
+//  port: port,
   path: "/checkout/preferences?access_token=" + access_token,
   method: "POST",
   headers: {
@@ -15,6 +15,7 @@ const options = {
   },
 };
 function get_preference_id(data, callback) {
+  console.log(data);
   request = https.request(options, (res) => {
     if (res.statusCode == 201) {
       let data = "";
@@ -26,7 +27,7 @@ function get_preference_id(data, callback) {
         callback(resData.id);
       });
     } else {
-      console.log("Mercado Pago API Error:");
+      console.log(`Mercado Pago API Error: ${res.statusMessage}`);
     }
   });
   request.on("error", (error) => {
@@ -38,14 +39,15 @@ function get_preference_id(data, callback) {
 
 module.exports = {
   createPreference(auction, highestBid, payer_info, callback) {
-    const data = JSON.stringify({
+  console.log(auction);
+  const data = JSON.stringify({
       items: [
         {
           title: auction.name,
           description: auction.description,
           quantity: auction.quantity,
           currency_id: "ARS",
-          unit_price: highestBid,
+          unit_price: parseFloat(highestBid),
         },
       ],
       payer: {
