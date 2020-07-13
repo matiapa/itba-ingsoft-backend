@@ -14,7 +14,6 @@ var auction = require("./routes/auction");
 var bid = require("./routes/bid");
 var expert = require("./routes/expert");
 var lot = require("./routes/lot");
-var mp_notifications = require("./routes/mp_notifications");
 var photo = require("./routes/photo");
 var chat = require("./routes/chat");
 
@@ -117,6 +116,5 @@ app.use("/auction", auction.init(io));
 app.use("/bid", bid);
 app.use("/expert", expert);
 app.use("/lot", lot);
-app.use("/mp", mp_notifications);
 app.use("/photo", photo);
 app.use("/chat", chat(io));
