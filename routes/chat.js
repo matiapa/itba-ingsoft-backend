@@ -41,14 +41,14 @@ module.exports = function(server) {
     io = server.of("/chat");
     io.use(auth.checkSocket);
     io.on("connection", (socket) => {
-        console.log("a user connected");
-        console.log(socket.user);
+        // console.log("a user connected");
+        // console.log(socket.user);
         socket.join(socket.user.uid);
         socket.on("disconnect", () => {
             console.log("user disconnected");
         });
         socket.on("chat message", async (to, msg) => {
-            console.log(`Message "${msg}" sent to "${to}"`);
+            // console.log(`Message "${msg}" sent to "${to}"`);
             entry = {
                 from_id: socket.user.uid,
                 to_id: to,
