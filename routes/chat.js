@@ -38,10 +38,11 @@ router.post("/:id", auth.checkAuth, (req, res) => {
 
 var io;
 module.exports = function(server) {
-    const io = server.of("/chat");
+    io = server.of("/chat");
     io.use(auth.checkSocket);
     io.on("connection", (socket) => {
         console.log("a user connected");
+        console.log(socket.user);
         socket.join(socket.user.uid);
         socket.on("disconnect", () => {
             console.log("user disconnected");
