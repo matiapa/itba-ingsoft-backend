@@ -24,7 +24,7 @@ router.post("/:id", auth.checkAuth, (req, res) => {
         }
         result = Chat.addMessage(entry).then(
             (msg) => {
-                io.to(entry.to_id).send(entry.msg);
+                io.to(entry.to_id).send(entry);
                 res.status(201).end();
             }
             , (err) => {
@@ -49,13 +49,14 @@ module.exports = function(server) {
         });
         socket.on("chat message", async (to, msg) => {
             console.log(`Message "${msg}" sent to "${to}"`);
-            socket.to(to).send(msg);
-            await Chat.addMessage({
+            entry = {
                 from_id: socket.user.uid,
                 to_id: to,
                 date: new Date(),
                 msg: msg
-            });
+            };
+            await Chat.addMessage(entry);
+            socket.to(to).send(entry);
         });
     });
     return router;
