@@ -113,7 +113,7 @@ app.set('server', server);
 io = require("socket.io")(server);
 
 app.use("/user", user);
-app.use("/auction", auction(io));
+app.use("/auction", auction.init(io));
 app.use("/bid", bid);
 app.use("/expert", expert);
 app.use("/lot", lot);

@@ -4,13 +4,13 @@ const Lot = require("../db/queries/lot.js");
 const auth = require("../firebase/authorization");
 const schemas = require("../db/schemas.js");
 const Joi = require("joi");
-const Auction = require("../db/queries/auction.js");
+const Auction = require("./auction");
 
 //Para testear porque log in esta roto
 router.post("/", auth.checkAuth);
 router.post("/", (req, res) => {
   Joi.validate(req.body, schemas.lot_required).then(
-    (data) => {
+    async (data) => {
       const lot = {
         owner_id: req.user.uid,
         name: data.name,
@@ -20,23 +20,16 @@ router.post("/", (req, res) => {
         initial_price: data.initial_price,
         quantity: data.quantity,
       };
-      Lot.createLot(lot).then((l) => {
-        l = l[0];
-        auction = {
-          lot_id: l.id,
-          creation_date: new Date(),
-          deadline: new Date().addDays(7),
-        };
-        Auction.createAuction(auction).then(() => {
-          res.status(201).json({ id: l.id }).end();
-        });
-        data.lot_photos.forEach((photo_id) => {
-          // console.log(photo_id);
-          Lot.postPhoto({ lot_id: l.id, photo_id: photo_id }).then((info) => {
-            res.status(201).json(info).end();
-          });
-        });
-      });
+      l = await Lot.createLot(lot);
+      l = l[0];
+      
+      Auction.openAuction(l.id);
+      
+      await Promise.all(
+        data.lot_photos.map(async (photo_id) => {
+          await Lot.postPhoto({ lot_id: l.id, photo_id: photo_id });
+      }));
+      res.status(201).send({id: l.id}); 
     },
     (err) => {
       console.log(err);
@@ -130,6 +123,12 @@ router.get("/:id/status", (req, res) => {
 Date.prototype.addDays = function (days) {
   var date = new Date(this.valueOf());
   date.setDate(date.getDate() + days);
+  return date;
+};
+
+Date.prototype.addMinutes = function (mins) {
+  var date = new Date(this.valueOf());
+  date.setMinutes(date.getMinutes() + mins);
   return date;
 };
 

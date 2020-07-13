@@ -6,6 +6,7 @@ const schemas = require("../db/schemas.js");
 const Joi = require("joi");
 const Bid = require("../db/queries/bid.js");
 const Lot = require("../db/queries/lot.js");
+const schedule = require('node-schedule');
 
 // router.use(auth.checkAuth);
 
@@ -379,16 +380,57 @@ router.get("/", (req, res) => {
 
 var io;
 
-module.exports = function (server) {
-  io = server.of("/auction");
-  io.on("connection", (socket) => {
-    socket.on("disconnect", () => {
-      // console.log("user disconnected");
+const mpRequests = require("../requests/mp_requests");
+const User = require("../db/queries/user.js");
+
+async function finishAuction(id) {
+  await Auction.closeAuction(id);
+  auction = await Auction.getAuctionById(id);
+  winnerBid = await Bid.getHighestBid(id);
+  console.log(`Closing ${id}`);
+  if(winnerBid)
+  {
+    winnerInfo = await User.getUserById(winnerBid.user_id);
+    preference = mpRequests.createPreference(auction, winnerBid.amount, winnerInfo, (preferenceId) => {
+      io.to(id).emit("auctionClosed", {
+        auc_id: id,
+        winner_id: winnerBid.user_id,
+        highestBid: winnerBid.amount,
+        preference_id: preferenceId
+      });
     });
-    socket.on("subscribe", function (msg) {
-      socket.join(msg);
-      // console.log(msg);
+  }
+  else
+  {
+    io.to(id).emit("auctionClosed", {
+      auc_id: id,
+      winner_id: null,
     });
-  });
-  return router;
+  }
+}
+
+module.exports = {
+  init(server) {
+    io = server.of("/auction");
+    io.on("connection", (socket) => {
+      socket.on("disconnect", () => {
+        // console.log("user disconnected");
+      });
+      socket.on("subscribe", function (msg) {
+        socket.join(msg);
+        // console.log(msg);
+      });
+    });
+    return router;
+  },
+  async openAuction(id) {
+    auctionData = {
+      lot_id: id,
+      creation_date: new Date(),
+      deadline: new Date().addMinutes(5),
+    };
+    await Auction.createAuction(auctionData);
+
+    schedule.scheduleJob(auctionData.deadline, finishAuction.bind(null, auctionData.lot_id));
+  }
 };
