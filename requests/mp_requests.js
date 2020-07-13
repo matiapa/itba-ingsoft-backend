@@ -1,11 +1,6 @@
 const https = require("https");
 
-// const access_token =
-//   "TEST-2172260712360317-070421-ddef0a4c0adf8c987aa7cb19bf73bf49-293458878";
-
-const access_token =
-  "TEST-4476490537750707-071314-18d41e803365641b61ecf5f1cc242b94-608421115";
-//const port = 3000;
+const access_token = process.env.MP_ACCESS_TOKEN;
 
 const options = {
   hostname: "api.mercadopago.com",
