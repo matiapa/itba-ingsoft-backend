@@ -392,12 +392,14 @@ async function finishAuction(id) {
   {
     winnerInfo = await User.getUserById(winnerBid.user_id);
     preference = mpRequests.createPreference(auction, winnerBid.amount, winnerInfo, (preferenceId) => {
-      io.to(id).emit("auctionClosed", {
+      msg = {
         auc_id: id,
         winner_id: winnerBid.user_id,
         highestBid: winnerBid.amount,
         preference_id: preferenceId
-      });
+      };
+      console.log(msg)
+      io.to(id).emit("auctionClosed", msg);
     });
   }
   else
