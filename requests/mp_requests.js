@@ -1,13 +1,15 @@
 const https = require("https");
 
-const access_token =
-  "TEST-2172260712360317-070421-ddef0a4c0adf8c987aa7cb19bf73bf49-293458878";
+// const access_token =
+//   "TEST-2172260712360317-070421-ddef0a4c0adf8c987aa7cb19bf73bf49-293458878";
 
+const access_token =
+  "TEST-4476490537750707-071314-18d41e803365641b61ecf5f1cc242b94-608421115";
 //const port = 3000;
 
 const options = {
   hostname: "api.mercadopago.com",
-//  port: port,
+  //  port: port,
   path: "/checkout/preferences?access_token=" + access_token,
   method: "POST",
   headers: {
@@ -39,8 +41,8 @@ function get_preference_id(data, callback) {
 
 module.exports = {
   createPreference(auction, highestBid, payer_info, callback) {
-  console.log(auction);
-  const data = JSON.stringify({
+    console.log(auction);
+    const data = JSON.stringify({
       items: [
         {
           title: auction.name,
