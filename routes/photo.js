@@ -27,7 +27,11 @@ const deleteTmp = (file, callback) => {
   });
 };
 
-router.get("/:id", express.static(path.join(__dirname, "../uploads/")));
+router.get("/:id.jpg", async (req, res) => {
+  var photo = await Photo.getPhoto(req.params.id);
+  res.write(photo.data, 'binary');
+  res.end(null, 'binary');
+});
 
 router.post("/", auth.checkAuth, upload.single("image"), (req, res) => {
     const tempPath = req.file.path;
@@ -35,21 +39,10 @@ router.post("/", auth.checkAuth, upload.single("image"), (req, res) => {
       fs.mkdirSync(photoDir);
     }
     if (path.extname(req.file.originalname).toLowerCase() === ".jpg") {
-      Photo.addPhoto(req.user.uid).then((id) => {
-        id = id[0];        
-        const targetPath = photoDir + id + ".jpg";
-        mv(tempPath, targetPath, err => { 
-          if (err)
-          {
-            Photo.deletePhoto(id);
-            deleteTmp(tempPath, (e) => {
-              return handleError(e ? e : err, res);
-            });
-          }
-          else
-            res.status(201).send({id: id});
-        });
-      }, (err) => {
+      Photo.addPhoto(req.user.uid, tempPath).then((id) => {
+        id = id[0];
+        res.status(201).send({id: id});
+      }).catch((err) => {
         console.log(err);
         deleteTmp(tempPath, (e) => {
           return handleError(e ? e : err, res);
